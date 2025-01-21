@@ -1,146 +1,117 @@
-import tkinter as tk
-from tkinter import messagebox
 import time
+import re
 import os
 from datetime import datetime
 import pandas as pd
 
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
 
-# =========================================================================
-# CONFIGURACIONES
-# =========================================================================
-
-URL_ADIDAS = "https://www.adidas.cl/"
-CSS_SEARCH_INPUT = 'input[data-auto-id="searchinput-desktop"]'
-CSS_RESULT_CONTAINER = "div.gl-product-card-container"
-CSS_PRICE = "div.gl-price-item.notranslate"
-
-def guardar_excel_adidas(datos):
+def extraer_nombre_precio_desde_texto(full_text):
     """
-    Guarda en un archivo Excel la lista de datos [codigo, nombre, precio, url].
-    """
-    df = pd.DataFrame(datos, columns=["Código", "Nombre", "Precio", "URL"])
-    fecha_hora = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    nombre_archivo = f"Adidas_Scraping_{fecha_hora}.xlsx"
-    ruta_archivo = os.path.join(os.getcwd(), nombre_archivo)
-    df.to_excel(ruta_archivo, index=False)
-    print(f"Datos guardados en: {ruta_archivo}")
-
-def procesar_codigos_adidas(codigos_productos):
-    """
-    1) Para cada código en 'codigos_productos':
-       - Entra a https://www.adidas.cl
-       - Busca el código en la barra de búsqueda
-       - Extrae nombre, precio y URL del primer resultado
-       - Si no encuentra producto o falla, se registra como "No se encontró".
-    2) Retorna la lista con [codigo, nombre, precio, url]
+    Busca en el texto completo (body.text) el nombre y el precio.
+    Ajusta la lógica según tus patrones reales.
     """
 
-    # Configurar opciones de Chrome
-    chrome_options = Options()
-    
-    # Opción para excluir logs de Chrome
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
-    
-    # Opcional: desactivar GPU (a veces evita algunos errores de renderizado)
-    chrome_options.add_argument("--disable-gpu")
-    
-    # Opcional: modo headless (si no necesitas ver la ventana)
-    # chrome_options.add_argument("--headless=new")
+    # Convertimos todo a minúsculas para facilitar la comparación
+    lower_text = full_text.lower()
 
-    # Crear el servicio usando webdriver_manager (descarga o actualiza el driver)
+    # ---------------------------
+    # 1) EXTRAER NOMBRE
+    # ---------------------------
+    # Supongamos que quieres encontrar la línea que contenga
+    # "zapatos de fútbol predator pro terreno firme".
+    # (Si varía el texto, ajusta a tu gusto)
+    nombre_buscado = "zapatos de fútbol predator pro terreno firme"
+
+    product_name_found = None
+    product_price_found = None
+
+    # 1.A) Recorremos línea por línea
+    lines = full_text.split('\n')
+    for i, line in enumerate(lines):
+        line_lower = line.lower()
+        if nombre_buscado in line_lower:
+            product_name_found = line.strip()  # Tomamos la línea exacta como "nombre"
+
+            # 2) Buscamos el precio en las líneas posteriores
+            #    Suponiendo que el precio empiece con "$"
+            for j in range(i+1, len(lines)):
+                if lines[j].startswith('$'):
+                    product_price_found = lines[j].strip()
+                    break
+            break
+
+    # 1.B) Si no se encontró nada con esa línea, puedes usar un Regex de fallback
+    #      para buscar "Zapatos de fútbol" + "terreno firme" en un rango de texto.
+    if not product_name_found:
+        # Ejemplo de expresión regular flexible:
+        # "zapatos de fútbol" + algo + "terreno firme"
+        pattern = re.compile(r"(zapatos de fútbol.*?terreno firme)", re.IGNORECASE | re.DOTALL)
+        match_name = pattern.search(full_text)
+        if match_name:
+            product_name_found = match_name.group(1).strip()
+
+    # ---------------------------
+    # 2) EXTRAER PRECIO (si no se encontró arriba)
+    # ---------------------------
+    if not product_price_found:
+        # Ejemplo: buscar la primera coincidencia que se parezca a $###.### (o con puntos).
+        match_price = re.search(r"\$\d{1,3}(\.\d{3})*(,\d+)?", full_text)
+        if match_price:
+            product_price_found = match_price.group(0)
+
+    return product_name_found, product_price_found
+
+
+def scrape_by_full_text(url):
+    """
+    1. Carga la URL dada en Chrome.
+    2. Obtiene todo el texto visible (body.text).
+    3. Extrae el nombre y el precio usando la función de parseo de texto.
+    4. Retorna (nombre, precio, url_actual).
+    """
+
     service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = webdriver.Chrome(service=service)
 
-    resultados = []
+    product_name_found = None
+    product_price_found = None
+    final_url = None
 
     try:
-        for codigo in codigos_productos:
-            print(f"\n=== Procesando código: {codigo} ===")
-            driver.get(URL_ADIDAS)
-            time.sleep(2)
+        driver.get(url)
+        time.sleep(3)  # Espera para que cargue la página
 
-            try:
-                search_input = WebDriverWait(driver, 10).until(
-                    EC.visibility_of_element_located((By.CSS_SELECTOR, CSS_SEARCH_INPUT))
-                )
-                search_input.clear()
-                search_input.send_keys(codigo)
-                search_input.send_keys(Keys.ENTER)
+        # 1) Capturar todo el texto del <body>
+        full_text = driver.find_element(By.TAG_NAME, 'body').text
 
-                WebDriverWait(driver, 10).until(
-                    EC.visibility_of_element_located((By.CSS_SELECTOR, CSS_RESULT_CONTAINER))
-                )
+        # 2) Extraer nombre y precio
+        product_name_found, product_price_found = extraer_nombre_precio_desde_texto(full_text)
 
-                # Extraer nombre
-                try:
-                    product_name_element = driver.find_element(
-                        By.CSS_SELECTOR, "div.gl-product-card__details-main a span"
-                    )
-                    product_name = product_name_element.text.strip()
-                except:
-                    product_name = "No se encontró nombre"
+        # 3) Obtener la URL actual (simula F6)
+        final_url = driver.current_url
 
-                # Extraer precio
-                try:
-                    product_price_element = driver.find_element(By.CSS_SELECTOR, CSS_PRICE)
-                    product_price = product_price_element.text.strip()
-                except:
-                    product_price = "No se encontró precio"
-
-                # Extraer URL
-                try:
-                    product_link_element = product_name_element.find_element(By.XPATH, "./ancestor::a")
-                    product_url = product_link_element.get_attribute("href")
-                except:
-                    product_url = "No se encontró URL"
-
-                resultados.append([codigo, product_name, product_price, product_url])
-
-            except:
-                print(f"No se encontró el código {codigo} (sin resultados).")
-                resultados.append([codigo, "No se encontró", "No se encontró", "No se encontró"])
-
+    except Exception as e:
+        print(f"Error al procesar la URL {url}:\n{e}")
     finally:
         driver.quit()
 
-    return resultados
+    return product_name_found, product_price_found, final_url
 
-def iniciar_proceso():
-    codigos_str = text_codigos.get("1.0", tk.END)
-    codigos_productos = codigos_str.split()
 
-    if not codigos_productos:
-        messagebox.showwarning("Advertencia", "No se ingresaron códigos.")
-        return
+if __name__ == "__main__":
+    # EJEMPLO: Asume que ya estás en una URL donde
+    # "Zapatos de Fútbol Predator Pro Terreno Firme" y "$129.990" aparecen en el texto.
+    # Ajusta la URL a tu caso real (página de detalle del producto, etc.)
+    url_producto = "https://www.adidas.cl/zapatos-de-futbol-x-speedportal.1-terreno-firme/GZ5109.html"  # URL a modo de ejemplo
 
-    datos = procesar_codigos_adidas(codigos_productos)
-    guardar_excel_adidas(datos)
-    messagebox.showinfo("Proceso finalizado", "¡El proceso de scraping ha concluido exitosamente!")
+    nombre, precio, la_url = scrape_by_full_text(url_producto)
 
-# =========================================================================
-# INTERFAZ TKINTER
-# =========================================================================
-
-ventana = tk.Tk()
-ventana.title("Web Scraping Adidas Chile")
-
-lbl_instruccion = tk.Label(ventana, text="Pega aquí los códigos (separados por espacios o líneas):")
-lbl_instruccion.pack(padx=10, pady=5)
-
-text_codigos = tk.Text(ventana, width=60, height=10)
-text_codigos.pack(padx=10, pady=5)
-
-btn_iniciar = tk.Button(ventana, text="Iniciar proceso", command=iniciar_proceso, bg="lightblue")
-btn_iniciar.pack(pady=10)
-
-ventana.mainloop()
+    print("===========================================")
+    print("Nombre encontrado:", nombre)
+    print("Precio encontrado:", precio)
+    print("URL actual:", la_url)
+    print("===========================================")
