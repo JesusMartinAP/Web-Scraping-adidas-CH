@@ -1,10 +1,15 @@
-import tkinter as tk
-from tkinter import ttk, messagebox
+import flet
+from flet import (
+    Page, Column, Row, Text, TextField, ElevatedButton, ProgressBar,
+    FilePicker, FilePickerResultEvent, FilePickerFileType,
+    icons, SnackBar
+)
 import threading
 import time
-import re
+import logging
 import os
 from datetime import datetime
+
 import pandas as pd
 
 from selenium import webdriver
@@ -19,52 +24,20 @@ from selenium.common.exceptions import TimeoutException
 
 from webdriver_manager.chrome import ChromeDriverManager
 
-# ------------------------------------------------------------------
-# 1) PARSEAR EL TEXTO (SIMIL "CTRL + A") EN PÁGINA DETALLE
-# ------------------------------------------------------------------
-def extraer_nombre_precio_desde_texto(full_text):
-    """
-    Ajusta la lógica según tus patrones reales.
-    Ejemplo: buscar "zapatos de fútbol predator pro terreno firme" y línea siguiente con '$'.
-    """
-    nombre_buscado = "zapatos de fútbol predator pro terreno firme"
-    product_name_found = None
-    product_price_found = None
+# ----------------------------------------------------------------
+# Configurar logging
+# ----------------------------------------------------------------
+logging.basicConfig(
+    filename="adidas_scraping.log",
+    filemode="a",
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    level=logging.INFO,
+)
 
-    lines = full_text.split('\n')
-    for i, line in enumerate(lines):
-        if nombre_buscado in line.lower():
-            product_name_found = line.strip()
-            # Buscamos el precio en líneas siguientes que empiecen con "$"
-            for j in range(i+1, len(lines)):
-                if lines[j].startswith('$'):
-                    product_price_found = lines[j].strip()
-                    break
-            break
-
-    # Regex fallback para nombre
-    if not product_name_found:
-        pattern = re.compile(r"(zapatos de fútbol.*?terreno firme)", re.IGNORECASE | re.DOTALL)
-        match_name = pattern.search(full_text)
-        if match_name:
-            product_name_found = match_name.group(1).strip()
-
-    # Regex fallback para precio
-    if not product_price_found:
-        match_price = re.search(r"\$\d{1,3}(\.\d{3})*(,\d+)?", full_text)
-        if match_price:
-            product_price_found = match_price.group(0)
-
-    return product_name_found, product_price_found
-
-
-# ------------------------------------------------------------------
-# 2) CERRAR BANNER DE COOKIES
-# ------------------------------------------------------------------
+# ----------------------------------------------------------------
+# Cerrar banner de cookies
+# ----------------------------------------------------------------
 def close_cookie_banner(driver):
-    """
-    Ajusta el selector al botón del banner de cookies real en tu región.
-    """
     try:
         cookie_btn = WebDriverWait(driver, 5).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, 'button.gl-cta--primary'))
@@ -73,17 +46,12 @@ def close_cookie_banner(driver):
     except TimeoutException:
         pass
     except Exception as e:
-        print("Error al cerrar banner de cookies:", e)
+        logging.error(f"Error al cerrar banner de cookies: {e}")
 
-
-# ------------------------------------------------------------------
-# 3) CERRAR POP-UP (LA “X”)
-# ------------------------------------------------------------------
+# ----------------------------------------------------------------
+# Cerrar pop-up
+# ----------------------------------------------------------------
 def close_popup(driver):
-    """
-    Intenta cerrar el pop-up con la "X".
-    Ajusta el selector si tu HTML difiere (por id, clase, etc.).
-    """
     try:
         pop_close_btn = WebDriverWait(driver, 5).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button.gl-modal__close"))
@@ -92,21 +60,24 @@ def close_popup(driver):
     except TimeoutException:
         pass
     except Exception as e:
-        print("Error al cerrar pop-up:", e)
+        logging.error(f"Error al cerrar pop-up: {e}")
 
-
-# ------------------------------------------------------------------
-# 4) FLUJO PRINCIPAL DE SCRAPING: ABRIR, CERRAR BANNERS, CLIQUEAR ÍCONO BUSCAR, ETC.
-# ------------------------------------------------------------------
+# ----------------------------------------------------------------
+# Scraping principal
+# ----------------------------------------------------------------
 def scrape_code_in_adidas(codigo):
     """
-    - Abre adidas.cl
-    - Cierra banner de cookies y pop-up
-    - Haz clic en el ícono de búsqueda (span -> svg -> #search)
-    - Pega el código en el campo de búsqueda y Enter
-    - Abre primer producto
-    - Obtiene body.text, parsea nombre y precio
-    - Retorna (nombre, precio, url_final)
+    Flujo:
+      1. Abrir adidas.cl
+      2. Cerrar banner cookies y pop-up
+      3. Pegar el código en input[data-auto-id="searchinput-desktop"], Enter
+      4. Esperar resultados -> a[data-auto-id="search-product"]
+      5. Clic en primer producto -> Detalle
+      6. Extraer:
+         - Nombre: <h1 data-auto-id="product-title"> <span>...</span> </h1>
+         - Precios (div.gl-price.gl-price--horizontal.notranslate[data-auto-id="gl-price-item"])
+           * .gl-price-item--crossed => precio normal
+           * .gl-price-item--sale => precio oferta
     """
 
     chrome_options = Options()
@@ -116,39 +87,22 @@ def scrape_code_in_adidas(codigo):
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
-    product_name_found = None
-    product_price_found = None
+    product_name = None
+    regular_price = None
+    sale_price = None
     final_url = None
 
     try:
         # 1) Ir a adidas.cl
         driver.get("https://www.adidas.cl/")
-        WebDriverWait(driver, 15).until(
-            EC.visibility_of_element_located((By.TAG_NAME, 'body'))
-        )
+        WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.TAG_NAME, 'body')))
         time.sleep(2)
 
-        # 2) Cerrar banner de cookies y pop-up
+        # 2) Cerrar banner cookies y pop-up
         close_cookie_banner(driver)
         close_popup(driver)
 
-        # 3) Hacer clic en el ícono de BÚSQUEDA
-        #    Ej: si tu HTML es: <span class="gl-icon__wrapper" role="img"><svg ...><use xlink:href="#search"></use></svg></span>
-        #    Lo más práctico es cliquear el padre <button> si existe. Si no, busca el <span>.
-        try:
-            search_icon = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "span.gl-icon__wrapper[role='img'] svg.gl-icon use[xlink\\:href='#search']"))
-            )
-            # Selenium no puede hacer click en <use>. Haz click en su elemento padre
-            #   busquemos .find_element(By.XPATH, "./ancestor::button") o un contenedor <span>.
-            search_icon_parent = search_icon.find_element(By.XPATH, "./ancestor::span")
-            search_icon_parent.click()
-        except TimeoutException:
-            # Si no encuentra el ícono, quizas la barra de búsqueda ya esté visible
-            pass
-
-        # 4) Buscar el campo de búsqueda
-        #    (Puede que aparezca tras pulsar el ícono; ajusta si no lo encuentra)
+        # 3) Input desktop (pegar código y Enter)
         search_input = WebDriverWait(driver, 15).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, 'input[data-auto-id="searchinput-desktop"]'))
         )
@@ -156,167 +110,278 @@ def scrape_code_in_adidas(codigo):
         search_input.send_keys(codigo)
         search_input.send_keys(Keys.ENTER)
 
-        # 5) Esperar resultados
+        # 4) Esperar la lista de resultados (sugerencias o la búsqueda) con data-auto-id="search-product"
         WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, "div.gl-product-card"))
+            EC.visibility_of_element_located((By.CSS_SELECTOR, 'a[data-auto-id="search-product"]'))
         )
 
-        # Tomar primer producto
-        first_product_link = driver.find_element(By.CSS_SELECTOR, "div.gl-product-card__details-main a")
+        # Tomar el primer producto
+        first_product_link = driver.find_element(By.CSS_SELECTOR, 'a[data-auto-id="search-product"]')
         final_url = first_product_link.get_attribute("href")
         first_product_link.click()
 
-        # 6) Capturar texto en la página de detalle
+        # 5) Esperar la página de detalle y extraer nombre
         WebDriverWait(driver, 15).until(
-            EC.visibility_of_element_located((By.TAG_NAME, 'body'))
+            EC.visibility_of_element_located((By.CSS_SELECTOR, 'h1[data-auto-id="product-title"] span'))
         )
-        time.sleep(2)
-        full_text = driver.find_element(By.TAG_NAME, 'body').text
+        time.sleep(2)  # Pequeña pausa extra
 
-        product_name_found, product_price_found = extraer_nombre_precio_desde_texto(full_text)
+        # Nombre del producto
+        product_name = driver.find_element(By.CSS_SELECTOR, 'h1[data-auto-id="product-title"] span').text
+
+        # 6) Extraer precios
+        #    <div class="gl-price gl-price--horizontal notranslate" data-auto-id="gl-price-item">
+        #       <div class="gl-price-item gl-price-item--crossed notranslate">$169.990</div>
+        #       <div class="gl-price-item gl-price-item--sale notranslate">$101.990</div>
+        #    </div>
+        price_block = driver.find_element(By.CSS_SELECTOR, 'div.gl-price.gl-price--horizontal.notranslate[data-auto-id="gl-price-item"]')
+        price_items = price_block.find_elements(By.CSS_SELECTOR, 'div.gl-price-item')
+
+        for p_item in price_items:
+            classes = p_item.get_attribute("class")
+            price_text = p_item.text.strip()
+            if "gl-price-item--crossed" in classes:
+                regular_price = price_text
+            elif "gl-price-item--sale" in classes:
+                sale_price = price_text
+            else:
+                # Si no tiene ni crossed ni sale, puede ser que sea el único precio disponible
+                if not regular_price:
+                    regular_price = price_text
+
         final_url = driver.current_url
 
     except Exception as e:
-        print(f"Error procesando código {codigo}: {e}")
+        logging.error(f"Error procesando código {codigo}: {e}")
     finally:
         driver.quit()
 
-    return product_name_found, product_price_found, final_url
+    return product_name, regular_price, sale_price, final_url
 
-
-# ------------------------------------------------------------------
-# 5) GUARDAR EXCEL
-# ------------------------------------------------------------------
+# ----------------------------------------------------------------
+# Guardar en Excel
+# ----------------------------------------------------------------
 def guardar_excel_adidas(datos):
-    df = pd.DataFrame(datos, columns=["Código", "Nombre", "Precio", "URL final"])
+    """
+    datos: lista de [codigo, nombre, precio_normal, precio_descuento, url]
+    """
+    df = pd.DataFrame(datos, columns=[
+        "Código",
+        "Nombre",
+        "Precio Normal",
+        "Precio Descuento",
+        "URL final"
+    ])
     fecha_hora = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     nombre_archivo = f"Adidas_Scraping_{fecha_hora}.xlsx"
     df.to_excel(nombre_archivo, index=False)
-    print(f"Datos guardados en: {nombre_archivo}")
+    logging.info(f"Datos guardados en: {nombre_archivo}")
+    return nombre_archivo
 
+# ----------------------------------------------------------------
+# Interfaz Flet
+# ----------------------------------------------------------------
+def main(page: Page):
+    page.title = "Scraping Adidas - Flet (Nuevos Selectores: h1 y gl-price)"
 
-# ------------------------------------------------------------------
-# 6) TKINTER APP: PROGRESO, CRONÓMETRO, STOP
-# ------------------------------------------------------------------
-class AdidasScraperApp(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.title("Web Scraping Adidas - Clic en icono de búsqueda")
-        self.geometry("600x350")
+    stop_event = threading.Event()  # Para detener
+    is_running = False
+    start_time = [0]
 
-        style = ttk.Style(self)
-        style.theme_use("clam")
+    # ----------------------------------------
+    # Elementos de la UI
+    # ----------------------------------------
+    codigos_field = TextField(
+        label="Códigos de producto (uno por línea)",
+        multiline=True,
+        expand=True,
+        height=150,
+    )
 
-        self.stop_event = threading.Event()
-        self.is_running = False
-        self.start_time = None
+    progress_bar = ProgressBar(value=0, width=400)
+    progress_label = Text(value="Progreso: 0%", size=14)
+    timer_label = Text(value="Tiempo transcurrido: 00:00", size=12)
+    log_text = Text(value="", size=12)
 
-        self.create_widgets()
-        self.update_timer()
+    # ----------------------------------------
+    # Funciones de ayuda
+    # ----------------------------------------
+    def actualizar_log(msg: str):
+        log_text.value += f"{msg}\n"
+        page.update()
 
-    def create_widgets(self):
-        lbl_instruccion = ttk.Label(self, text="Ingresa CÓDIGOS de producto (uno por línea):")
-        lbl_instruccion.pack(padx=10, pady=5, anchor="w")
+    def formatear_tiempo(segundos: int):
+        m, s = divmod(segundos, 60)
+        return f"{m:02d}:{s:02d}"
 
-        self.text_codigos = tk.Text(self, width=70, height=6)
-        self.text_codigos.pack(padx=10, pady=5)
+    # ----------------------------------------
+    # Timer
+    # ----------------------------------------
+    def actualizar_timer(_):
+        if is_running:
+            elapsed = int(time.time() - start_time[0])
+            timer_label.value = f"Tiempo transcurrido: {formatear_tiempo(elapsed)}"
+            page.update()
 
-        frame_botones = ttk.Frame(self)
-        frame_botones.pack(pady=5)
+    page.interval = 1000
+    page.on_interval = actualizar_timer
 
-        btn_iniciar = ttk.Button(frame_botones, text="Iniciar", command=self.iniciar_proceso)
-        btn_iniciar.pack(side="left", padx=10)
-
-        btn_detener = ttk.Button(frame_botones, text="Detener", command=self.detener_proceso)
-        btn_detener.pack(side="left", padx=10)
-
-        self.progress_var = tk.IntVar()
-        self.progress_bar = ttk.Progressbar(self, orient="horizontal", length=400,
-                                            mode="determinate", variable=self.progress_var)
-        self.progress_bar.pack(pady=5)
-
-        self.label_progress_var = tk.StringVar(value="Esperando...")
-        self.label_progress = ttk.Label(self, textvariable=self.label_progress_var)
-        self.label_progress.pack()
-
-        self.timer_var = tk.StringVar(value="Tiempo transcurrido: 00:00")
-        self.label_timer = ttk.Label(self, textvariable=self.timer_var, font=("Helvetica", 10, "bold"))
-        self.label_timer.pack(pady=5)
-
-    def iniciar_proceso(self):
-        if self.is_running:
-            messagebox.showwarning("Advertencia", "Ya hay un proceso en ejecución.")
-            return
-
-        self.stop_event.clear()
-        self.is_running = True
-        self.start_time = time.time()
-
-        codigos_str = self.text_codigos.get("1.0", tk.END).strip()
-        self.codigos_list = codigos_str.split()
-        if not self.codigos_list:
-            messagebox.showwarning("Advertencia", "No se ingresaron códigos.")
-            self.is_running = False
-            return
-
-        self.label_progress_var.set("Iniciando scraping...")
-        self.progress_var.set(0)
-
-        hilo = threading.Thread(target=self.run_scraping, daemon=True)
-        hilo.start()
-
-    def run_scraping(self):
+    # ----------------------------------------
+    # Lógica de scraping (en un hilo)
+    # ----------------------------------------
+    def run_scraping(codigos_list):
+        nonlocal is_running
         resultados = []
-        total = len(self.codigos_list)
+        total = len(codigos_list)
 
-        for i, codigo in enumerate(self.codigos_list, start=1):
-            if self.stop_event.is_set():
+        actualizar_log("Iniciando scraping...")
+
+        for i, codigo in enumerate(codigos_list, start=1):
+            if stop_event.is_set():
+                actualizar_log("Scraping detenido por el usuario.")
                 break
 
-            progress = int(i / total * 100)
-            self.progress_var.set(progress)
-            self.label_progress_var.set(f"Procesando {i} de {total}")
-            self.update_idletasks()
+            actualizar_log(f"Procesando código {i}/{total}: {codigo}")
 
-            nombre, precio, url_final = scrape_code_in_adidas(codigo)
+            try:
+                nombre, precio_normal, precio_descuento, url_final = scrape_code_in_adidas(codigo)
+            except Exception as e:
+                logging.error(f"Error en scrape_code_in_adidas({codigo}): {e}")
+                nombre = precio_normal = precio_descuento = url_final = "Error"
 
             if not nombre:
                 nombre = "No se encontró"
-            if not precio:
-                precio = "No se encontró"
+            if not precio_normal:
+                precio_normal = "No se encontró"
+            if not precio_descuento:
+                precio_descuento = "No se encontró"
             if not url_final:
                 url_final = "No se obtuvo URL"
 
-            resultados.append([codigo, nombre, precio, url_final])
+            resultados.append([codigo, nombre, precio_normal, precio_descuento, url_final])
 
+            # Barra de progreso
+            progress = float(i) / float(total)
+            progress_bar.value = progress
+            progress_label.value = f"Progreso: {int(progress * 100)}%"
+            page.update()
+
+        # Guardar en Excel
         if resultados:
-            guardar_excel_adidas(resultados)
+            archivo = guardar_excel_adidas(resultados)
+            actualizar_log(f"Resultados guardados en {archivo}")
 
-        self.is_running = False
-        if self.stop_event.is_set():
-            self.label_progress_var.set("Proceso detenido")
+        is_running = False
+        if stop_event.is_set():
+            progress_label.value = "Proceso detenido"
         else:
-            self.label_progress_var.set("Proceso finalizado")
+            progress_label.value = "Proceso finalizado"
+        page.update()
 
-        messagebox.showinfo("Información", "Scraping finalizado (o detenido).")
-
-    def detener_proceso(self):
-        if not self.is_running:
-            messagebox.showwarning("Advertencia", "No hay proceso en ejecución.")
+    # ----------------------------------------
+    # Botones
+    # ----------------------------------------
+    def on_iniciar_click(_):
+        nonlocal is_running
+        if is_running:
+            page.snack_bar = SnackBar(Text("Ya hay un proceso en ejecución."), open=True)
+            page.update()
             return
-        self.stop_event.set()
 
-    def update_timer(self):
-        if self.is_running and self.start_time is not None:
-            elapsed = int(time.time() - self.start_time)
-            minutes, seconds = divmod(elapsed, 60)
-            self.timer_var.set(f"Tiempo transcurrido: {minutes:02d}:{seconds:02d}")
-        self.after(1000, self.update_timer)
+        # Resetear interfaz
+        log_text.value = ""
+        progress_bar.value = 0
+        progress_label.value = "Progreso: 0%"
+        timer_label.value = "Tiempo transcurrido: 00:00"
+        page.update()
 
+        stop_event.clear()
+        is_running = True
+        start_time[0] = time.time()
 
-# ------------------------------------------------------------------
-# 7) EJECUTAR LA APP
-# ------------------------------------------------------------------
+        # Obtener lista de códigos
+        codigos_str = codigos_field.value.strip()
+        if not codigos_str:
+            page.snack_bar = SnackBar(Text("No hay códigos ingresados."), open=True)
+            page.update()
+            is_running = False
+            return
+
+        codigos_list = codigos_str.splitlines()
+
+        # Iniciar hilo
+        hilo = threading.Thread(target=run_scraping, args=(codigos_list,), daemon=True)
+        hilo.start()
+
+    def on_detener_click(_):
+        if not is_running:
+            page.snack_bar = SnackBar(Text("No hay proceso en ejecución."), open=True)
+            page.update()
+            return
+        stop_event.set()
+
+    # ----------------------------------------
+    # FilePicker (opcional)
+    # ----------------------------------------
+    def on_file_picked(e: FilePickerResultEvent):
+        if e.files is not None and len(e.files) > 0:
+            file_path = e.files[0].path
+            if file_path and os.path.isfile(file_path):
+                try:
+                    with open(file_path, "r", encoding="utf-8") as f:
+                        contenido = f.read()
+                    codigos_field.value = contenido
+                    page.snack_bar = SnackBar(Text(f"Archivo cargado: {file_path}"), open=True)
+                except Exception as ex:
+                    page.snack_bar = SnackBar(Text(f"Error al leer archivo: {ex}"), open=True)
+            else:
+                page.snack_bar = SnackBar(Text("Archivo no válido."), open=True)
+        page.update()
+
+    file_picker = FilePicker(on_result=on_file_picked)
+
+    # ----------------------------------------
+    # Layout principal
+    # ----------------------------------------
+    page.add(
+        file_picker,
+        Column(
+            controls=[
+                Text("Scraping Adidas - Flet (Nuevos Selectores: h1 y gl-price)", size=18, weight="bold"),
+                Text("1) Ingresa tus códigos o carga un archivo .txt"),
+                Row(
+                    controls=[
+                        ElevatedButton(
+                            "Cargar archivo",
+                            icon=icons.UPLOAD_FILE,
+                            on_click=lambda _: file_picker.pick_files(
+                                allow_multiple=False,
+                                file_type=FilePickerFileType.ANY
+                            )
+                        )
+                    ]
+                ),
+                codigos_field,
+                Row(
+                    controls=[
+                        ElevatedButton("Iniciar", icon=icons.PLAY_ARROW, on_click=on_iniciar_click),
+                        ElevatedButton("Detener", icon=icons.STOP, on_click=on_detener_click),
+                    ]
+                ),
+                progress_bar,
+                progress_label,
+                timer_label,
+                Text("Log de proceso:", size=14, weight="bold"),
+                log_text
+            ],
+            scroll="auto",
+            expand=True
+        )
+    )
+
+# ----------------------------------------------------------------
+# Ejecutar la app
+# ----------------------------------------------------------------
 if __name__ == "__main__":
-    app = AdidasScraperApp()
-    app.mainloop()
+    # Para empaquetar con PyInstaller y abrir en ventana nativa:
+    flet.app(target=main, view=flet.FLET_APP)
