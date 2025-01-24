@@ -1,0 +1,9 @@
+2025-01-24 10:58:50,017 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-24 10:58:50,019 [INFO] Starting up TCP server on localhost:50713
+2025-01-24 10:58:50,024 [INFO] Flet app has started...
+2025-01-24 10:58:50,026 [INFO] App URL: tcp://localhost:50713
+2025-01-24 10:58:50,026 [INFO] Starting Flet View app...
+2025-01-24 10:58:50,026 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-24 10:58:50,027 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-24 10:58:50,320 [INFO] App session started
+2025-01-24 10:58:58,669 [INFO] Datos guardados en: Resultado_Regex_2025-01-24_10-58-58.xlsx

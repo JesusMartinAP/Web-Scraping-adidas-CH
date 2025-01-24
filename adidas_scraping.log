@@ -343,3 +343,98 @@ Stacktrace:
 	(No symbol) [0x00000000]
 
 2025-01-23 16:21:27,191 [INFO] Datos guardados en: Adidas_Scraping_2025-01-23_16-21-22.xlsx
+2025-01-24 10:44:54,832 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-24 10:44:54,834 [INFO] Starting up TCP server on localhost:59413
+2025-01-24 10:44:54,838 [INFO] Flet app has started...
+2025-01-24 10:44:54,839 [INFO] App URL: tcp://localhost:59413
+2025-01-24 10:44:54,839 [INFO] Starting Flet View app...
+2025-01-24 10:44:54,840 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-24 10:44:54,840 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-24 10:44:55,328 [INFO] App session started
+2025-01-24 10:45:13,127 [INFO] ====== WebDriver manager ======
+2025-01-24 10:45:13,896 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-24 10:45:13,962 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-24 10:45:13,995 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-24 10:45:14,080 [INFO] WebDriver version 131.0.6778.264 selected
+2025-01-24 10:45:14,082 [INFO] Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.264/win32/chromedriver-win32.zip
+2025-01-24 10:45:14,082 [INFO] About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.264/win32/chromedriver-win32.zip
+2025-01-24 10:45:14,230 [INFO] Driver downloading response is 200
+2025-01-24 10:45:14,802 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-24 10:45:14,936 [INFO] Driver has been saved in cache [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\131.0.6778.264]
+2025-01-24 10:45:35,674 [ERROR] Error procesando código IV6033: Message: 
+
+2025-01-24 10:45:41,530 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-24 10:45:41,532 [INFO] Starting up TCP server on localhost:59863
+2025-01-24 10:45:41,536 [INFO] Flet app has started...
+2025-01-24 10:45:41,537 [INFO] App URL: tcp://localhost:59863
+2025-01-24 10:45:41,537 [INFO] Starting Flet View app...
+2025-01-24 10:45:41,538 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-24 10:45:41,538 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-24 10:45:41,818 [INFO] App session started
+2025-01-24 10:45:44,076 [INFO] ====== WebDriver manager ======
+2025-01-24 10:45:44,810 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-24 10:45:44,854 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-24 10:45:44,883 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\131.0.6778.264\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-24 10:46:03,589 [ERROR] Error procesando código IV6033: Message: 
+Stacktrace:
+	GetHandleVerifier [0x0116FD53+23747]
+	(No symbol) [0x010F7D54]
+	(No symbol) [0x00FCBE53]
+	(No symbol) [0x0100FCA6]
+	(No symbol) [0x0100FEEB]
+	(No symbol) [0x0104D852]
+	(No symbol) [0x01031E44]
+	(No symbol) [0x0104B41E]
+	(No symbol) [0x01031B96]
+	(No symbol) [0x01003F3C]
+	(No symbol) [0x01004EBD]
+	GetHandleVerifier [0x0144AC73+3017699]
+	GetHandleVerifier [0x0145B93B+3086507]
+	GetHandleVerifier [0x014540F2+3055714]
+	GetHandleVerifier [0x01205AF0+637536]
+	(No symbol) [0x01100A5D]
+	(No symbol) [0x010FDA28]
+	(No symbol) [0x010FDBC5]
+	(No symbol) [0x010F07F0]
+	BaseThreadInitThunk [0x772B5D49+25]
+	RtlInitializeExceptionChain [0x77C0CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x77C0CE41+561]
+
+2025-01-24 13:27:43,271 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-24 13:27:43,272 [INFO] Starting up TCP server on localhost:64377
+2025-01-24 13:27:43,276 [INFO] Flet app has started...
+2025-01-24 13:27:43,277 [INFO] App URL: tcp://localhost:64377
+2025-01-24 13:27:43,277 [INFO] Starting Flet View app...
+2025-01-24 13:27:43,277 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-24 13:27:43,277 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-24 13:27:43,570 [INFO] App session started
+2025-01-24 13:27:47,696 [INFO] ====== WebDriver manager ======
+2025-01-24 13:27:48,454 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-24 13:27:48,491 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-24 13:27:48,520 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\131.0.6778.264\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-24 13:28:07,327 [ERROR] Error procesando código IV6033: Message: 
+Stacktrace:
+	GetHandleVerifier [0x0116FD53+23747]
+	(No symbol) [0x010F7D54]
+	(No symbol) [0x00FCBE53]
+	(No symbol) [0x0100FCA6]
+	(No symbol) [0x0100FEEB]
+	(No symbol) [0x0104D852]
+	(No symbol) [0x01031E44]
+	(No symbol) [0x0104B41E]
+	(No symbol) [0x01031B96]
+	(No symbol) [0x01003F3C]
+	(No symbol) [0x01004EBD]
+	GetHandleVerifier [0x0144AC73+3017699]
+	GetHandleVerifier [0x0145B93B+3086507]
+	GetHandleVerifier [0x014540F2+3055714]
+	GetHandleVerifier [0x01205AF0+637536]
+	(No symbol) [0x01100A5D]
+	(No symbol) [0x010FDA28]
+	(No symbol) [0x010FDBC5]
+	(No symbol) [0x010F07F0]
+	BaseThreadInitThunk [0x772B5D49+25]
+	RtlInitializeExceptionChain [0x77C0CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x77C0CE41+561]
+
+2025-01-24 13:28:13,763 [INFO] Datos guardados en: Adidas_Scraping_2025-01-24_13-28-09.xlsx

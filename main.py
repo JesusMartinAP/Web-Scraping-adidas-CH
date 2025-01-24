@@ -1,13 +1,13 @@
 import flet
 from flet import (
     Page, Column, Row, Text, TextField, ElevatedButton, ProgressBar,
-    FilePicker, FilePickerResultEvent, FilePickerFileType,
-    icons, SnackBar
+    FilePicker, FilePickerResultEvent, FilePickerFileType, icons, SnackBar
 )
 import threading
 import time
 import logging
 import os
+import re
 from datetime import datetime
 
 import pandas as pd
@@ -24,6 +24,7 @@ from selenium.common.exceptions import TimeoutException
 
 from webdriver_manager.chrome import ChromeDriverManager
 
+
 # ----------------------------------------------------------------
 # Configurar logging
 # ----------------------------------------------------------------
@@ -34,8 +35,9 @@ logging.basicConfig(
     level=logging.INFO,
 )
 
+
 # ----------------------------------------------------------------
-# Cerrar banner de cookies
+# 1) Funciones genéricas para cerrar banners
 # ----------------------------------------------------------------
 def close_cookie_banner(driver):
     try:
@@ -48,9 +50,7 @@ def close_cookie_banner(driver):
     except Exception as e:
         logging.error(f"Error al cerrar banner de cookies: {e}")
 
-# ----------------------------------------------------------------
-# Cerrar pop-up
-# ----------------------------------------------------------------
+
 def close_popup(driver):
     try:
         pop_close_btn = WebDriverWait(driver, 5).until(
@@ -62,34 +62,64 @@ def close_popup(driver):
     except Exception as e:
         logging.error(f"Error al cerrar pop-up: {e}")
 
+
 # ----------------------------------------------------------------
-# Scraping principal
+# 2) Extraer nombre y precio usando RegEx en todo el texto
+# ----------------------------------------------------------------
+def parse_name_price_from_text(full_text):
+    """
+    Ajusta los patrones según tus necesidades reales.
+    Aquí usamos ejemplos directos:
+      - Nombre fijo: "Camiseta Local Universidad de Chile 2025"
+      - Precio: formato como "$59.990", "$101.990", etc.
+    """
+    name_pattern = r"(Camiseta Local Universidad de Chile 2025)"
+    price_pattern = r"\$\d{1,3}(\.\d{3})*(,\d+)?"
+
+    found_name = None
+    found_price = None
+
+    # Buscar el nombre exacto (puedes usar una regex más amplia)
+    match_name = re.search(name_pattern, full_text)
+    if match_name:
+        found_name = match_name.group(1)
+
+    # Buscar el primer precio (puedes ajustar si hay varios)
+    match_price = re.search(price_pattern, full_text)
+    if match_price:
+        found_price = match_price.group(0)
+
+    return found_name, found_price
+
+
+# ----------------------------------------------------------------
+# 3) Scraping principal con Selenium + RegEx
 # ----------------------------------------------------------------
 def scrape_code_in_adidas(codigo):
     """
     Flujo:
-      1. Abrir adidas.cl
-      2. Cerrar banner cookies y pop-up
-      3. Pegar el código en input[data-auto-id="searchinput-desktop"], Enter
-      4. Esperar resultados -> a[data-auto-id="search-product"]
-      5. Clic en primer producto -> Detalle
-      6. Extraer:
-         - Nombre: <h1 data-auto-id="product-title"> <span>...</span> </h1>
-         - Precios (div.gl-price.gl-price--horizontal.notranslate[data-auto-id="gl-price-item"])
-           * .gl-price-item--crossed => precio normal
-           * .gl-price-item--sale => precio oferta
+      1) Ir a adidas.cl
+      2) Cerrar pop-ups
+      3) Buscar el 'codigo' en input[data-auto-id="searchinput-desktop"], Enter
+      4) Clic en el primer resultado
+      5) Seleccionar todo el texto del <body> (o simplemente body.text)
+      6) Usar RegEx para extraer:
+         - Nombre: "Camiseta Local Universidad de Chile 2025" (ejemplo)
+         - Precio: "$59.990" (ejemplo)
+      7) La URL final es driver.current_url
     """
 
     chrome_options = Options()
-    chrome_options.add_argument("--disable-gpu")
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
-    product_name = None
-    regular_price = None
-    sale_price = None
+    # Maximizamos la ventana (por si la vista "responsive" oculta algo)
+    driver.maximize_window()
+
+    found_name = None
+    found_price = None
     final_url = None
 
     try:
@@ -98,11 +128,11 @@ def scrape_code_in_adidas(codigo):
         WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.TAG_NAME, 'body')))
         time.sleep(2)
 
-        # 2) Cerrar banner cookies y pop-up
+        # 2) Cerrar banners
         close_cookie_banner(driver)
         close_popup(driver)
 
-        # 3) Input desktop (pegar código y Enter)
+        # 3) Buscar
         search_input = WebDriverWait(driver, 15).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, 'input[data-auto-id="searchinput-desktop"]'))
         )
@@ -110,45 +140,26 @@ def scrape_code_in_adidas(codigo):
         search_input.send_keys(codigo)
         search_input.send_keys(Keys.ENTER)
 
-        # 4) Esperar la lista de resultados (sugerencias o la búsqueda) con data-auto-id="search-product"
+        # 4) Esperar resultados
         WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, 'a[data-auto-id="search-product"]'))
         )
-
-        # Tomar el primer producto
         first_product_link = driver.find_element(By.CSS_SELECTOR, 'a[data-auto-id="search-product"]')
         final_url = first_product_link.get_attribute("href")
         first_product_link.click()
 
-        # 5) Esperar la página de detalle y extraer nombre
-        WebDriverWait(driver, 15).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, 'h1[data-auto-id="product-title"] span'))
-        )
-        time.sleep(2)  # Pequeña pausa extra
+        # 5) Esperar página de detalle
+        WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.TAG_NAME, 'body')))
+        time.sleep(2)
 
-        # Nombre del producto
-        product_name = driver.find_element(By.CSS_SELECTOR, 'h1[data-auto-id="product-title"] span').text
+        # "Ctrl + A" es para seleccionar todo, pero no necesitas mandar keys:
+        # con driver.find_element(By.TAG_NAME, 'body').text ya obtienes todo el texto.
+        full_text = driver.find_element(By.TAG_NAME, 'body').text
 
-        # 6) Extraer precios
-        #    <div class="gl-price gl-price--horizontal notranslate" data-auto-id="gl-price-item">
-        #       <div class="gl-price-item gl-price-item--crossed notranslate">$169.990</div>
-        #       <div class="gl-price-item gl-price-item--sale notranslate">$101.990</div>
-        #    </div>
-        price_block = driver.find_element(By.CSS_SELECTOR, 'div.gl-price.gl-price--horizontal.notranslate[data-auto-id="gl-price-item"]')
-        price_items = price_block.find_elements(By.CSS_SELECTOR, 'div.gl-price-item')
+        # 6) RegEx
+        found_name, found_price = parse_name_price_from_text(full_text)
 
-        for p_item in price_items:
-            classes = p_item.get_attribute("class")
-            price_text = p_item.text.strip()
-            if "gl-price-item--crossed" in classes:
-                regular_price = price_text
-            elif "gl-price-item--sale" in classes:
-                sale_price = price_text
-            else:
-                # Si no tiene ni crossed ni sale, puede ser que sea el único precio disponible
-                if not regular_price:
-                    regular_price = price_text
-
+        # 7) URL final
         final_url = driver.current_url
 
     except Exception as e:
@@ -156,40 +167,36 @@ def scrape_code_in_adidas(codigo):
     finally:
         driver.quit()
 
-    return product_name, regular_price, sale_price, final_url
+    return found_name, found_price, final_url
+
 
 # ----------------------------------------------------------------
-# Guardar en Excel
+# 4) Guardar Excel
 # ----------------------------------------------------------------
 def guardar_excel_adidas(datos):
     """
-    datos: lista de [codigo, nombre, precio_normal, precio_descuento, url]
+    datos: lista de [codigo, nombre, precio, url]
     """
-    df = pd.DataFrame(datos, columns=[
-        "Código",
-        "Nombre",
-        "Precio Normal",
-        "Precio Descuento",
-        "URL final"
-    ])
+    df = pd.DataFrame(datos, columns=["Código", "Nombre", "Precio", "URL final"])
     fecha_hora = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     nombre_archivo = f"Adidas_Scraping_{fecha_hora}.xlsx"
     df.to_excel(nombre_archivo, index=False)
     logging.info(f"Datos guardados en: {nombre_archivo}")
     return nombre_archivo
 
-# ----------------------------------------------------------------
-# Interfaz Flet
-# ----------------------------------------------------------------
-def main(page: Page):
-    page.title = "Scraping Adidas - Flet (Nuevos Selectores: h1 y gl-price)"
 
-    stop_event = threading.Event()  # Para detener
+# ----------------------------------------------------------------
+# 5) Interfaz Flet
+# ----------------------------------------------------------------
+def main(page: flet.Page):
+    page.title = "Scraping Adidas - Flet con RegEx en texto completo"
+
+    stop_event = threading.Event()
     is_running = False
     start_time = [0]
 
     # ----------------------------------------
-    # Elementos de la UI
+    # Elementos UI
     # ----------------------------------------
     codigos_field = TextField(
         label="Códigos de producto (uno por línea)",
@@ -204,7 +211,7 @@ def main(page: Page):
     log_text = Text(value="", size=12)
 
     # ----------------------------------------
-    # Funciones de ayuda
+    # Funciones de apoyo
     # ----------------------------------------
     def actualizar_log(msg: str):
         log_text.value += f"{msg}\n"
@@ -227,7 +234,7 @@ def main(page: Page):
     page.on_interval = actualizar_timer
 
     # ----------------------------------------
-    # Lógica de scraping (en un hilo)
+    # Lógica de scraping en hilo
     # ----------------------------------------
     def run_scraping(codigos_list):
         nonlocal is_running
@@ -244,21 +251,21 @@ def main(page: Page):
             actualizar_log(f"Procesando código {i}/{total}: {codigo}")
 
             try:
-                nombre, precio_normal, precio_descuento, url_final = scrape_code_in_adidas(codigo)
+                found_name, found_price, final_url = scrape_code_in_adidas(codigo)
             except Exception as e:
                 logging.error(f"Error en scrape_code_in_adidas({codigo}): {e}")
-                nombre = precio_normal = precio_descuento = url_final = "Error"
+                found_name = "Error"
+                found_price = "Error"
+                final_url = "Error"
 
-            if not nombre:
-                nombre = "No se encontró"
-            if not precio_normal:
-                precio_normal = "No se encontró"
-            if not precio_descuento:
-                precio_descuento = "No se encontró"
-            if not url_final:
-                url_final = "No se obtuvo URL"
+            if not found_name:
+                found_name = "No se encontró"
+            if not found_price:
+                found_price = "No se encontró"
+            if not final_url:
+                final_url = "No se obtuvo URL"
 
-            resultados.append([codigo, nombre, precio_normal, precio_descuento, url_final])
+            resultados.append([codigo, found_name, found_price, final_url])
 
             # Barra de progreso
             progress = float(i) / float(total)
@@ -266,7 +273,6 @@ def main(page: Page):
             progress_label.value = f"Progreso: {int(progress * 100)}%"
             page.update()
 
-        # Guardar en Excel
         if resultados:
             archivo = guardar_excel_adidas(resultados)
             actualizar_log(f"Resultados guardados en {archivo}")
@@ -299,7 +305,6 @@ def main(page: Page):
         is_running = True
         start_time[0] = time.time()
 
-        # Obtener lista de códigos
         codigos_str = codigos_field.value.strip()
         if not codigos_str:
             page.snack_bar = SnackBar(Text("No hay códigos ingresados."), open=True)
@@ -309,7 +314,6 @@ def main(page: Page):
 
         codigos_list = codigos_str.splitlines()
 
-        # Iniciar hilo
         hilo = threading.Thread(target=run_scraping, args=(codigos_list,), daemon=True)
         hilo.start()
 
@@ -347,8 +351,8 @@ def main(page: Page):
         file_picker,
         Column(
             controls=[
-                Text("Scraping Adidas - Flet (Nuevos Selectores: h1 y gl-price)", size=18, weight="bold"),
-                Text("1) Ingresa tus códigos o carga un archivo .txt"),
+                Text("Scraping Adidas - Flet + RegEx en texto completo", size=18, weight="bold"),
+                Text("1) Pega los códigos o carga un archivo con códigos."),
                 Row(
                     controls=[
                         ElevatedButton(
@@ -379,8 +383,9 @@ def main(page: Page):
         )
     )
 
+
 # ----------------------------------------------------------------
-# Ejecutar la app
+# 6) Ejecutar la app
 # ----------------------------------------------------------------
 if __name__ == "__main__":
     # Para empaquetar con PyInstaller y abrir en ventana nativa:
