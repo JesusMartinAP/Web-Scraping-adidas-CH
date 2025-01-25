@@ -22,11 +22,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
+# Para instalar el driver automáticamente:
 from webdriver_manager.chrome import ChromeDriverManager
 
-
 # ----------------------------------------------------------------
-# Configurar logging
+# Configurar logging (útil cuando empaquetas con PyInstaller)
 # ----------------------------------------------------------------
 logging.basicConfig(
     filename="adidas_scraping.log",
@@ -35,9 +35,8 @@ logging.basicConfig(
     level=logging.INFO,
 )
 
-
 # ----------------------------------------------------------------
-# 1) Funciones genéricas para cerrar banners
+# 1) Cerrar banners de cookies y pop-ups
 # ----------------------------------------------------------------
 def close_cookie_banner(driver):
     try:
@@ -64,14 +63,13 @@ def close_popup(driver):
 
 
 # ----------------------------------------------------------------
-# 2) Extraer nombre y precio usando RegEx en todo el texto
+# 2) Expresiones regulares para extraer nombre y precio del texto
 # ----------------------------------------------------------------
 def parse_name_price_from_text(full_text):
     """
-    Ajusta los patrones según tus necesidades reales.
-    Aquí usamos ejemplos directos:
-      - Nombre fijo: "Camiseta Local Universidad de Chile 2025"
-      - Precio: formato como "$59.990", "$101.990", etc.
+    Busca EXACTAMENTE "Camiseta Local Universidad de Chile 2025"
+    y la primera coincidencia de precio con formato $59.990, etc.
+    Ajusta si tu producto y precio son diferentes.
     """
     name_pattern = r"(Camiseta Local Universidad de Chile 2025)"
     price_pattern = r"\$\d{1,3}(\.\d{3})*(,\d+)?"
@@ -79,43 +77,39 @@ def parse_name_price_from_text(full_text):
     found_name = None
     found_price = None
 
-    # Buscar el nombre exacto (puedes usar una regex más amplia)
     match_name = re.search(name_pattern, full_text)
     if match_name:
         found_name = match_name.group(1)
 
-    # Buscar el primer precio (puedes ajustar si hay varios)
     match_price = re.search(price_pattern, full_text)
     if match_price:
         found_price = match_price.group(0)
 
     return found_name, found_price
 
-
 # ----------------------------------------------------------------
-# 3) Scraping principal con Selenium + RegEx
+# 3) Scraping principal
 # ----------------------------------------------------------------
 def scrape_code_in_adidas(codigo):
     """
     Flujo:
-      1) Ir a adidas.cl
-      2) Cerrar pop-ups
-      3) Buscar el 'codigo' en input[data-auto-id="searchinput-desktop"], Enter
-      4) Clic en el primer resultado
-      5) Seleccionar todo el texto del <body> (o simplemente body.text)
-      6) Usar RegEx para extraer:
-         - Nombre: "Camiseta Local Universidad de Chile 2025" (ejemplo)
-         - Precio: "$59.990" (ejemplo)
-      7) La URL final es driver.current_url
+      1) Abre "https://www.adidas.cl"
+      2) Cierra banner y pop-up
+      3) Pega 'codigo' en input[data-auto-id="searchinput-desktop"], Enter
+      4) Clic en primer producto
+      5) En la página de detalle, hace:
+          - Ctrl + A (seleccionar todo)
+          - F6 (como si fuera a la barra de direcciones)
+          - Toma body.text
+        y con RegEx extrae nombre y precio
+      6) Retorna (found_name, found_price, driver.current_url)
     """
-
     chrome_options = Options()
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
-
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
-    # Maximizamos la ventana (por si la vista "responsive" oculta algo)
+    # Maximizar la ventana para evitar problemas de diseño responsivo
     driver.maximize_window()
 
     found_name = None
@@ -128,11 +122,11 @@ def scrape_code_in_adidas(codigo):
         WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.TAG_NAME, 'body')))
         time.sleep(2)
 
-        # 2) Cerrar banners
+        # 2) Cerrar pop-ups
         close_cookie_banner(driver)
         close_popup(driver)
 
-        # 3) Buscar
+        # 3) Localizar campo de búsqueda
         search_input = WebDriverWait(driver, 15).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, 'input[data-auto-id="searchinput-desktop"]'))
         )
@@ -140,7 +134,7 @@ def scrape_code_in_adidas(codigo):
         search_input.send_keys(codigo)
         search_input.send_keys(Keys.ENTER)
 
-        # 4) Esperar resultados
+        # 4) Esperar primer producto y hacer click
         WebDriverWait(driver, 10).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, 'a[data-auto-id="search-product"]'))
         )
@@ -148,18 +142,25 @@ def scrape_code_in_adidas(codigo):
         final_url = first_product_link.get_attribute("href")
         first_product_link.click()
 
-        # 5) Esperar página de detalle
+        # 5) Esperar la página de detalle
         WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.TAG_NAME, 'body')))
         time.sleep(2)
 
-        # "Ctrl + A" es para seleccionar todo, pero no necesitas mandar keys:
-        # con driver.find_element(By.TAG_NAME, 'body').text ya obtienes todo el texto.
-        full_text = driver.find_element(By.TAG_NAME, 'body').text
+        # Ahora sí: Ctrl + A y luego F6
+        body_elem = driver.find_element(By.TAG_NAME, 'body')
+        # Enviar Ctrl + A
+        body_elem.send_keys(Keys.CONTROL, 'a')
+        time.sleep(1)
+        # Enviar F6
+        body_elem.send_keys(Keys.F6)
+        time.sleep(1)
 
-        # 6) RegEx
+        # Capturar todo el texto
+        full_text = driver.find_element(By.TAG_NAME, 'body').text
+        # Regex
         found_name, found_price = parse_name_price_from_text(full_text)
 
-        # 7) URL final
+        # URL final (equivale a "F6" + "copiar" la URL, pero Selenium la obtiene directamente)
         final_url = driver.current_url
 
     except Exception as e:
@@ -169,14 +170,10 @@ def scrape_code_in_adidas(codigo):
 
     return found_name, found_price, final_url
 
-
 # ----------------------------------------------------------------
-# 4) Guardar Excel
+# 4) Guardar en Excel
 # ----------------------------------------------------------------
 def guardar_excel_adidas(datos):
-    """
-    datos: lista de [codigo, nombre, precio, url]
-    """
     df = pd.DataFrame(datos, columns=["Código", "Nombre", "Precio", "URL final"])
     fecha_hora = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     nombre_archivo = f"Adidas_Scraping_{fecha_hora}.xlsx"
@@ -184,35 +181,28 @@ def guardar_excel_adidas(datos):
     logging.info(f"Datos guardados en: {nombre_archivo}")
     return nombre_archivo
 
-
 # ----------------------------------------------------------------
 # 5) Interfaz Flet
 # ----------------------------------------------------------------
 def main(page: flet.Page):
-    page.title = "Scraping Adidas - Flet con RegEx en texto completo"
+    page.title = "Scraping Adidas - CTRL+A y F6 (RegEx en texto completo)"
 
     stop_event = threading.Event()
     is_running = False
     start_time = [0]
 
-    # ----------------------------------------
-    # Elementos UI
-    # ----------------------------------------
+    # UI
     codigos_field = TextField(
         label="Códigos de producto (uno por línea)",
         multiline=True,
         expand=True,
         height=150,
     )
-
     progress_bar = ProgressBar(value=0, width=400)
     progress_label = Text(value="Progreso: 0%", size=14)
     timer_label = Text(value="Tiempo transcurrido: 00:00", size=12)
     log_text = Text(value="", size=12)
 
-    # ----------------------------------------
-    # Funciones de apoyo
-    # ----------------------------------------
     def actualizar_log(msg: str):
         log_text.value += f"{msg}\n"
         page.update()
@@ -221,9 +211,6 @@ def main(page: flet.Page):
         m, s = divmod(segundos, 60)
         return f"{m:02d}:{s:02d}"
 
-    # ----------------------------------------
-    # Timer
-    # ----------------------------------------
     def actualizar_timer(_):
         if is_running:
             elapsed = int(time.time() - start_time[0])
@@ -233,9 +220,6 @@ def main(page: flet.Page):
     page.interval = 1000
     page.on_interval = actualizar_timer
 
-    # ----------------------------------------
-    # Lógica de scraping en hilo
-    # ----------------------------------------
     def run_scraping(codigos_list):
         nonlocal is_running
         resultados = []
@@ -258,6 +242,10 @@ def main(page: flet.Page):
                 found_price = "Error"
                 final_url = "Error"
 
+            actualizar_log(f" - Nombre: {found_name}")
+            actualizar_log(f" - Precio: {found_price}")
+            actualizar_log(f" - URL: {final_url}")
+
             if not found_name:
                 found_name = "No se encontró"
             if not found_price:
@@ -267,7 +255,6 @@ def main(page: flet.Page):
 
             resultados.append([codigo, found_name, found_price, final_url])
 
-            # Barra de progreso
             progress = float(i) / float(total)
             progress_bar.value = progress
             progress_label.value = f"Progreso: {int(progress * 100)}%"
@@ -284,9 +271,6 @@ def main(page: flet.Page):
             progress_label.value = "Proceso finalizado"
         page.update()
 
-    # ----------------------------------------
-    # Botones
-    # ----------------------------------------
     def on_iniciar_click(_):
         nonlocal is_running
         if is_running:
@@ -294,7 +278,6 @@ def main(page: flet.Page):
             page.update()
             return
 
-        # Resetear interfaz
         log_text.value = ""
         progress_bar.value = 0
         progress_label.value = "Progreso: 0%"
@@ -324,11 +307,8 @@ def main(page: flet.Page):
             return
         stop_event.set()
 
-    # ----------------------------------------
-    # FilePicker (opcional)
-    # ----------------------------------------
     def on_file_picked(e: FilePickerResultEvent):
-        if e.files is not None and len(e.files) > 0:
+        if e.files and len(e.files) > 0:
             file_path = e.files[0].path
             if file_path and os.path.isfile(file_path):
                 try:
@@ -344,15 +324,12 @@ def main(page: flet.Page):
 
     file_picker = FilePicker(on_result=on_file_picked)
 
-    # ----------------------------------------
-    # Layout principal
-    # ----------------------------------------
     page.add(
         file_picker,
         Column(
             controls=[
-                Text("Scraping Adidas - Flet + RegEx en texto completo", size=18, weight="bold"),
-                Text("1) Pega los códigos o carga un archivo con códigos."),
+                Text("Scraping Adidas - CTRL+A y F6 (RegEx en texto completo)", size=18, weight="bold"),
+                Text("1) Ingresa tus códigos (uno por línea) o carga un .txt."),
                 Row(
                     controls=[
                         ElevatedButton(
