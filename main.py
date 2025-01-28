@@ -1,3 +1,9 @@
+# --------------------------------------------------------
+# REQUISITOS:
+#   pip install flet selenium webdriver-manager pyperclip pandas openpyxl
+#   (y además PyInstaller si deseas generar el .exe)
+# --------------------------------------------------------
+
 import flet
 from flet import (
     Page,
@@ -17,6 +23,7 @@ import threading
 import time
 import logging
 import os
+import sys
 from datetime import datetime
 import pandas as pd
 import re
@@ -32,8 +39,26 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
+# --------------------------------------------------------
+# Función para manejar rutas en modo ejecutable PyInstaller
+# --------------------------------------------------------
+def resource_path(relative_path):
+    """
+    Retorna la ruta absoluta del 'relative_path' para que funcione
+    tanto al ejecutar .py directamente como al generar el .exe con PyInstaller.
+    """
+    try:
+        # En tiempo de ejecución con PyInstaller, se crea una carpeta temporal
+        base_path = sys._MEIPASS
+    except Exception:
+        # Si no estás congelado con PyInstaller, toma el directorio actual
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+# Configurar logging para guardar en un archivo local:
+log_file = resource_path("adidas_scraping.log")
 logging.basicConfig(
-    filename="adidas_scraping.log",
+    filename=log_file,
     filemode="a",
     format="%(asctime)s [%(levelname)s] %(message)s",
     level=logging.INFO,
@@ -62,15 +87,10 @@ def close_popup(driver):
     except:
         logging.info("No se encontró pop-up (o no se pudo cerrar).")
 
-
 # ----------------------------------------------------------------
 # 2) Función que simula Ctrl+A / Ctrl+C y obtiene todo el texto
 # ----------------------------------------------------------------
 def copy_page_text_like_human(driver):
-    """
-    Da clic en <body>, luego CTRL+A y CTRL+C,
-    y finalmente retorna el contenido del portapapeles (texto).
-    """
     body = driver.find_element(By.TAG_NAME, "body")
     body.click()
     time.sleep(1)
@@ -90,14 +110,6 @@ def copy_page_text_like_human(driver):
 # 3) Función principal de scraping: "scrape_like_human"
 # ----------------------------------------------------------------
 def scrape_like_human(codigo):
-    """
-    - Abre Adidas Chile
-    - Cierra banner/popup
-    - Busca el SKU "codigo"
-    - Si hay página de resultados, clic en el primero
-    - CTRL+A, CTRL+C -> texto
-    Retorna (url_final, texto_copiado).
-    """
     chrome_options = Options()
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
@@ -168,16 +180,10 @@ def scrape_like_human(codigo):
 
     return final_url, product_text
 
-
 # ----------------------------------------------------------------
 # 4) Lógicas para extraer nombre y precios (normal, descuento)
 # ----------------------------------------------------------------
 def parse_by_numeric_marker(lines):
-    """
-    Lógica A: busca la primera línea que sea SOLO dígitos (e.g. "27" o "1").
-    La siguiente línea no vacía => nombre
-    Luego, 1 o 2 líneas que empiecen con '$' => precio normal, precio descuento.
-    """
     patron_digitos = re.compile(r'^\d+$')
     patron_precio = re.compile(r'^\$\d[\d\.,]*')
 
@@ -185,7 +191,6 @@ def parse_by_numeric_marker(lines):
     while i < len(lines):
         line = lines[i].strip()
         if patron_digitos.match(line):
-            # Buscar nombre
             i += 1
             nombre = None
             while i < len(lines):
@@ -217,13 +222,7 @@ def parse_by_numeric_marker(lines):
 
     return None, None, None
 
-
 def parse_by_category_marker(lines):
-    """
-    Lógica B: busca línea con "Hombre •", "Mujer •", "Niñ(o/a)s •", "Unisex •"
-    Luego, siguiente línea no vacía => nombre
-    Luego, líneas con '$' => precios
-    """
     patron_categoria = re.compile(r'^(hombre|mujer|niñ[oa]s|unisex)\s*•', re.IGNORECASE)
     patron_precio = re.compile(r'^\$\d[\d\.,]*')
 
@@ -261,13 +260,7 @@ def parse_by_category_marker(lines):
         i += 1
     return None, None, None
 
-
 def extraer_nombre_precios(texto):
-    """
-    1) Divide en líneas
-    2) Aplica Lógica A (número suelto).
-       Si falla, Lógica B (categoría "Hombre • ...", etc.)
-    """
     lines = texto.splitlines()
 
     # Lógica A
@@ -283,14 +276,10 @@ def extraer_nombre_precios(texto):
     # Falló todo
     return None, None, None
 
-
 # ----------------------------------------------------------------
 # 5) Guardar en Excel
 # ----------------------------------------------------------------
 def guardar_excel_adidas(datos):
-    """
-    datos: lista de [codigo, nombre, precio_normal, precio_descuento, url_final]
-    """
     df = pd.DataFrame(datos, columns=[
         "Código",
         "Nombre",
@@ -303,7 +292,6 @@ def guardar_excel_adidas(datos):
     df.to_excel(nombre_archivo, index=False)
     logging.info(f"Datos guardados en: {nombre_archivo}")
     return nombre_archivo
-
 
 # ----------------------------------------------------------------
 # 6) Interfaz Flet
@@ -356,7 +344,6 @@ def main(page: flet.Page):
                 break
 
             actualizar_log(f"\nProcesando código {i}/{total}: {sku}")
-            # 1) Extraer texto con Selenium
             try:
                 url_final, texto_copiado = scrape_like_human(sku)
             except Exception as e:
@@ -365,13 +352,11 @@ def main(page: flet.Page):
                 url_final = None
                 texto_copiado = ""
 
-            # 2) extraer nombre, precio normal y precio desc.
             nombre_prod, p_normal, p_desc = extraer_nombre_precios(texto_copiado)
             actualizar_log(f" -> Nombre: {nombre_prod}")
             actualizar_log(f" -> Precio Normal: {p_normal}")
             actualizar_log(f" -> Precio Descuento: {p_desc}")
 
-            # Si nada se encontró, pon algo
             if not nombre_prod: nombre_prod = "No detectado"
             if not p_normal: p_normal = "No detectado"
             if not p_desc: p_desc = "N/A"
@@ -379,13 +364,11 @@ def main(page: flet.Page):
 
             resultados.append([sku, nombre_prod, p_normal, p_desc, url_final])
 
-            # Actualizar progreso
             progreso = float(i) / float(total)
             progress_bar.value = progreso
             progress_label.value = f"Progreso: {int(progreso * 100)}%"
             page.update()
 
-        # 3) Guardar en Excel
         if resultados:
             archivo = guardar_excel_adidas(resultados)
             actualizar_log(f"Resultados guardados en {archivo}")
@@ -486,11 +469,8 @@ def main(page: flet.Page):
         )
     )
 
-
-# ----------------------------------------------------------------
-# 7) Ejecutar la app Flet
-# ----------------------------------------------------------------
 if __name__ == "__main__":
-    # flet.app(target=main, view=flet.FLET_APP)
-    # O si prefieres abrir en el navegador:
-    flet.app(target=main, view=flet.WEB_BROWSER)
+    # Si deseas abrir en ventana Flet (Desktop):
+    flet.app(target=main, view=flet.FLET_APP)
+    # O si prefieres abrir en el navegador (puedes comentar la línea anterior y descomentar esta):
+    # flet.app(target=main, view=flet.WEB_BROWSER)
