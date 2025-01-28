@@ -589,3 +589,199 @@ Stacktrace:
 	RtlInitializeExceptionChain [0x77C0CEBB+107]
 	RtlGetAppContainerNamedObjectPath [0x77C0CE41+561]
 
+2025-01-27 15:14:50,094 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-27 15:14:50,097 [INFO] Starting up TCP server on localhost:63968
+2025-01-27 15:14:50,103 [INFO] Flet app has started...
+2025-01-27 15:14:50,105 [INFO] App URL: tcp://localhost:63968
+2025-01-27 15:14:50,105 [INFO] Starting Flet View app...
+2025-01-27 15:14:50,105 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 15:14:50,106 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 15:14:50,676 [INFO] App session started
+2025-01-27 15:15:02,100 [INFO] ====== WebDriver manager ======
+2025-01-27 15:15:02,864 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 15:15:02,931 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 15:15:02,960 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 15:15:03,132 [INFO] WebDriver version 131.0.6778.264 selected
+2025-01-27 15:15:03,134 [INFO] Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.264/win32/chromedriver-win32.zip
+2025-01-27 15:15:03,134 [INFO] About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.264/win32/chromedriver-win32.zip
+2025-01-27 15:15:03,278 [INFO] Driver downloading response is 200
+2025-01-27 15:15:03,910 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 15:15:04,037 [INFO] Driver has been saved in cache [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\131.0.6778.264]
+2025-01-27 15:15:22,608 [ERROR] Error procesando código IV6035: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00C5FD53+23747]
+	(No symbol) [0x00BE7D54]
+	(No symbol) [0x00ABBE53]
+	(No symbol) [0x00AFFCA6]
+	(No symbol) [0x00AFFEEB]
+	(No symbol) [0x00B3D852]
+	(No symbol) [0x00B21E44]
+	(No symbol) [0x00B3B41E]
+	(No symbol) [0x00B21B96]
+	(No symbol) [0x00AF3F3C]
+	(No symbol) [0x00AF4EBD]
+	GetHandleVerifier [0x00F3AC73+3017699]
+	GetHandleVerifier [0x00F4B93B+3086507]
+	GetHandleVerifier [0x00F440F2+3055714]
+	GetHandleVerifier [0x00CF5AF0+637536]
+	(No symbol) [0x00BF0A5D]
+	(No symbol) [0x00BEDA28]
+	(No symbol) [0x00BEDBC5]
+	(No symbol) [0x00BE07F0]
+	BaseThreadInitThunk [0x772B5D49+25]
+	RtlInitializeExceptionChain [0x77C0CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x77C0CE41+561]
+
+2025-01-27 15:15:29,079 [INFO] Datos guardados en: Adidas_Scraping_2025-01-27_15-15-24.xlsx
+2025-01-27 15:46:35,434 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-27 15:46:35,436 [INFO] Starting up TCP server on localhost:51963
+2025-01-27 15:46:35,441 [INFO] Flet app has started...
+2025-01-27 15:46:35,442 [INFO] App URL: tcp://localhost:51963
+2025-01-27 15:46:35,443 [INFO] Starting Flet View app...
+2025-01-27 15:46:35,444 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 15:46:35,444 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 15:46:35,722 [INFO] App session started
+2025-01-27 15:46:40,262 [INFO] ====== WebDriver manager ======
+2025-01-27 15:46:41,029 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 15:46:41,120 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 15:46:41,192 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\131.0.6778.264\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-27 15:47:05,750 [ERROR] Error procesando código ID5695: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00C5FD53+23747]
+	(No symbol) [0x00BE7D54]
+	(No symbol) [0x00ABBE53]
+	(No symbol) [0x00AFFCA6]
+	(No symbol) [0x00AFFEEB]
+	(No symbol) [0x00B3D852]
+	(No symbol) [0x00B21E44]
+	(No symbol) [0x00B3B41E]
+	(No symbol) [0x00B21B96]
+	(No symbol) [0x00AF3F3C]
+	(No symbol) [0x00AF4EBD]
+	GetHandleVerifier [0x00F3AC73+3017699]
+	GetHandleVerifier [0x00F4B93B+3086507]
+	GetHandleVerifier [0x00F440F2+3055714]
+	GetHandleVerifier [0x00CF5AF0+637536]
+	(No symbol) [0x00BF0A5D]
+	(No symbol) [0x00BEDA28]
+	(No symbol) [0x00BEDBC5]
+	(No symbol) [0x00BE07F0]
+	BaseThreadInitThunk [0x772B5D49+25]
+	RtlInitializeExceptionChain [0x77C0CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x77C0CE41+561]
+
+2025-01-27 15:47:12,252 [INFO] Datos guardados en: Adidas_Scraping_2025-01-27_15-47-07.xlsx
+2025-01-27 15:55:49,945 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-27 15:55:49,947 [INFO] Starting up TCP server on localhost:52821
+2025-01-27 15:55:49,951 [INFO] Flet app has started...
+2025-01-27 15:55:49,952 [INFO] App URL: tcp://localhost:52821
+2025-01-27 15:55:49,952 [INFO] Starting Flet View app...
+2025-01-27 15:55:49,953 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 15:55:49,953 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 15:55:50,234 [INFO] App session started
+2025-01-27 15:55:55,564 [INFO] ====== WebDriver manager ======
+2025-01-27 15:55:56,279 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 15:55:56,312 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 15:55:56,346 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\131.0.6778.264\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-27 15:56:15,872 [ERROR] Error procesando código ID5695: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00C5FD53+23747]
+	(No symbol) [0x00BE7D54]
+	(No symbol) [0x00ABBE53]
+	(No symbol) [0x00AFFCA6]
+	(No symbol) [0x00AFFEEB]
+	(No symbol) [0x00B3D852]
+	(No symbol) [0x00B21E44]
+	(No symbol) [0x00B3B41E]
+	(No symbol) [0x00B21B96]
+	(No symbol) [0x00AF3F3C]
+	(No symbol) [0x00AF4EBD]
+	GetHandleVerifier [0x00F3AC73+3017699]
+	GetHandleVerifier [0x00F4B93B+3086507]
+	GetHandleVerifier [0x00F440F2+3055714]
+	GetHandleVerifier [0x00CF5AF0+637536]
+	(No symbol) [0x00BF0A5D]
+	(No symbol) [0x00BEDA28]
+	(No symbol) [0x00BEDBC5]
+	(No symbol) [0x00BE07F0]
+	BaseThreadInitThunk [0x772B5D49+25]
+	RtlInitializeExceptionChain [0x77C0CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x77C0CE41+561]
+
+2025-01-27 15:56:22,336 [INFO] Datos guardados en: Adidas_Scraping_2025-01-27_15-56-18.xlsx
+2025-01-27 16:03:40,678 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-27 16:03:40,679 [INFO] Starting up TCP server on localhost:60037
+2025-01-27 16:03:40,684 [INFO] Flet app has started...
+2025-01-27 16:03:40,685 [INFO] App URL: tcp://localhost:60037
+2025-01-27 16:03:40,685 [INFO] Starting Flet View app...
+2025-01-27 16:03:40,686 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 16:03:40,686 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 16:03:40,966 [INFO] App session started
+2025-01-27 16:03:47,785 [INFO] ====== WebDriver manager ======
+2025-01-27 16:03:48,554 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 16:03:48,617 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 16:03:48,652 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\131.0.6778.264\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-27 16:04:07,634 [ERROR] Error procesando código ID5695: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00C5FD53+23747]
+	(No symbol) [0x00BE7D54]
+	(No symbol) [0x00ABBE53]
+	(No symbol) [0x00AFFCA6]
+	(No symbol) [0x00AFFEEB]
+	(No symbol) [0x00B3D852]
+	(No symbol) [0x00B21E44]
+	(No symbol) [0x00B3B41E]
+	(No symbol) [0x00B21B96]
+	(No symbol) [0x00AF3F3C]
+	(No symbol) [0x00AF4EBD]
+	GetHandleVerifier [0x00F3AC73+3017699]
+	GetHandleVerifier [0x00F4B93B+3086507]
+	GetHandleVerifier [0x00F440F2+3055714]
+	GetHandleVerifier [0x00CF5AF0+637536]
+	(No symbol) [0x00BF0A5D]
+	(No symbol) [0x00BEDA28]
+	(No symbol) [0x00BEDBC5]
+	(No symbol) [0x00BE07F0]
+	BaseThreadInitThunk [0x772B5D49+25]
+	RtlInitializeExceptionChain [0x77C0CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x77C0CE41+561]
+
+2025-01-27 16:04:14,101 [INFO] Datos guardados en: Adidas_Scraping_2025-01-27_16-04-09.xlsx
+2025-01-27 16:04:19,272 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-27 16:04:19,274 [INFO] Starting up TCP server on localhost:60144
+2025-01-27 16:04:19,278 [INFO] Flet app has started...
+2025-01-27 16:04:19,280 [INFO] App URL: tcp://localhost:60144
+2025-01-27 16:04:19,280 [INFO] Starting Flet View app...
+2025-01-27 16:04:19,280 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 16:04:19,280 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 16:04:19,546 [INFO] App session started
+2025-01-27 16:04:21,811 [INFO] ====== WebDriver manager ======
+2025-01-27 16:04:22,543 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 16:04:22,573 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-27 16:04:22,602 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\131.0.6778.264\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-27 16:04:41,434 [ERROR] Error procesando código ID5695: Message: 
+Stacktrace:
+	GetHandleVerifier [0x00C5FD53+23747]
+	(No symbol) [0x00BE7D54]
+	(No symbol) [0x00ABBE53]
+	(No symbol) [0x00AFFCA6]
+	(No symbol) [0x00AFFEEB]
+	(No symbol) [0x00B3D852]
+	(No symbol) [0x00B21E44]
+	(No symbol) [0x00B3B41E]
+	(No symbol) [0x00B21B96]
+	(No symbol) [0x00AF3F3C]
+	(No symbol) [0x00AF4EBD]
+	GetHandleVerifier [0x00F3AC73+3017699]
+	GetHandleVerifier [0x00F4B93B+3086507]
+	GetHandleVerifier [0x00F440F2+3055714]
+	GetHandleVerifier [0x00CF5AF0+637536]
+	(No symbol) [0x00BF0A5D]
+	(No symbol) [0x00BEDA28]
+	(No symbol) [0x00BEDBC5]
+	(No symbol) [0x00BE07F0]
+	BaseThreadInitThunk [0x772B5D49+25]
+	RtlInitializeExceptionChain [0x77C0CEBB+107]
+	RtlGetAppContainerNamedObjectPath [0x77C0CE41+561]
+
+2025-01-27 16:04:47,879 [INFO] Datos guardados en: Adidas_Scraping_2025-01-27_16-04-43.xlsx

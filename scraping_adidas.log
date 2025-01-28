@@ -1,0 +1,148 @@
+2025-01-27 15:51:35,366 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-27 15:51:35,368 [INFO] Starting up TCP server on localhost:52203
+2025-01-27 15:51:35,373 [INFO] Flet app has started...
+2025-01-27 15:51:35,375 [INFO] App URL: tcp://localhost:52203
+2025-01-27 15:51:35,375 [INFO] Starting Flet View app...
+2025-01-27 15:51:35,376 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 15:51:35,376 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 15:51:35,724 [INFO] App session started
+2025-01-27 15:51:45,817 [ERROR] Future exception was never retrieved
+future: <Future finished exception=NameError("name 'threading' is not defined")>
+Traceback (most recent call last):
+  File "C:\Users\jmapo\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet\core\page.py", line 948, in wrapper
+    handler(*args)
+  File "c:\Automatizacion\Web-Scraping-adidas-CH\main.py", line 156, in start_scraping
+    threading.Thread(target=run_scraping, daemon=True).start()
+    ^^^^^^^^^
+NameError: name 'threading' is not defined. Did you forget to import 'threading'
+2025-01-27 15:51:49,762 [ERROR] Future exception was never retrieved
+future: <Future finished exception=NameError("name 'threading' is not defined")>
+Traceback (most recent call last):
+  File "C:\Users\jmapo\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet\core\page.py", line 948, in wrapper
+    handler(*args)
+  File "c:\Automatizacion\Web-Scraping-adidas-CH\main.py", line 156, in start_scraping
+    threading.Thread(target=run_scraping, daemon=True).start()
+    ^^^^^^^^^
+NameError: name 'threading' is not defined. Did you forget to import 'threading'
+2025-01-27 15:52:09,274 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-27 15:52:09,275 [INFO] Starting up TCP server on localhost:54386
+2025-01-27 15:52:09,279 [INFO] Flet app has started...
+2025-01-27 15:52:09,281 [INFO] App URL: tcp://localhost:54386
+2025-01-27 15:52:09,281 [INFO] Starting Flet View app...
+2025-01-27 15:52:09,282 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 15:52:09,282 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-27 15:52:09,598 [INFO] App session started
+2025-01-27 15:52:14,391 [ERROR] Future exception was never retrieved
+future: <Future finished exception=NameError("name 'threading' is not defined")>
+Traceback (most recent call last):
+  File "C:\Users\jmapo\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet\core\page.py", line 948, in wrapper
+    handler(*args)
+  File "c:\Automatizacion\Web-Scraping-adidas-CH\main.py", line 156, in start_scraping
+    threading.Thread(target=run_scraping, daemon=True).start()
+    ^^^^^^^^^
+NameError: name 'threading' is not defined. Did you forget to import 'threading'
+2025-01-27 15:52:16,654 [ERROR] Future exception was never retrieved
+future: <Future finished exception=NameError("name 'threading' is not defined")>
+Traceback (most recent call last):
+  File "C:\Users\jmapo\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet\core\page.py", line 948, in wrapper
+    handler(*args)
+  File "c:\Automatizacion\Web-Scraping-adidas-CH\main.py", line 156, in start_scraping
+    threading.Thread(target=run_scraping, daemon=True).start()
+    ^^^^^^^^^
+NameError: name 'threading' is not defined. Did you forget to import 'threading'
+2025-01-27 15:52:17,154 [ERROR] Future exception was never retrieved
+future: <Future finished exception=NameError("name 'threading' is not defined")>
+Traceback (most recent call last):
+  File "C:\Users\jmapo\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet\core\page.py", line 948, in wrapper
+    handler(*args)
+  File "c:\Automatizacion\Web-Scraping-adidas-CH\main.py", line 156, in start_scraping
+    threading.Thread(target=run_scraping, daemon=True).start()
+    ^^^^^^^^^
+NameError: name 'threading' is not defined. Did you forget to import 'threading'
+2025-01-27 15:52:17,327 [ERROR] Future exception was never retrieved
+future: <Future finished exception=NameError("name 'threading' is not defined")>
+Traceback (most recent call last):
+  File "C:\Users\jmapo\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet\core\page.py", line 948, in wrapper
+    handler(*args)
+  File "c:\Automatizacion\Web-Scraping-adidas-CH\main.py", line 156, in start_scraping
+    threading.Thread(target=run_scraping, daemon=True).start()
+    ^^^^^^^^^
+NameError: name 'threading' is not defined. Did you forget to import 'threading'
+2025-01-27 15:52:17,487 [ERROR] Future exception was never retrieved
+future: <Future finished exception=NameError("name 'threading' is not defined")>
+Traceback (most recent call last):
+  File "C:\Users\jmapo\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet\core\page.py", line 948, in wrapper
+    handler(*args)
+  File "c:\Automatizacion\Web-Scraping-adidas-CH\main.py", line 156, in start_scraping
+    threading.Thread(target=run_scraping, daemon=True).start()
+    ^^^^^^^^^
+NameError: name 'threading' is not defined. Did you forget to import 'threading'
+2025-01-27 15:52:17,622 [ERROR] Future exception was never retrieved
+future: <Future finished exception=NameError("name 'threading' is not defined")>
+Traceback (most recent call last):
+  File "C:\Users\jmapo\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet\core\page.py", line 948, in wrapper
+    handler(*args)
+  File "c:\Automatizacion\Web-Scraping-adidas-CH\main.py", line 156, in start_scraping
+    threading.Thread(target=run_scraping, daemon=True).start()
+    ^^^^^^^^^
+NameError: name 'threading' is not defined. Did you forget to import 'threading'
+2025-01-27 15:52:17,778 [ERROR] Future exception was never retrieved
+future: <Future finished exception=NameError("name 'threading' is not defined")>
+Traceback (most recent call last):
+  File "C:\Users\jmapo\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet\core\page.py", line 948, in wrapper
+    handler(*args)
+  File "c:\Automatizacion\Web-Scraping-adidas-CH\main.py", line 156, in start_scraping
+    threading.Thread(target=run_scraping, daemon=True).start()
+    ^^^^^^^^^
+NameError: name 'threading' is not defined. Did you forget to import 'threading'
+2025-01-27 15:52:17,934 [ERROR] Future exception was never retrieved
+future: <Future finished exception=NameError("name 'threading' is not defined")>
+Traceback (most recent call last):
+  File "C:\Users\jmapo\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet\core\page.py", line 948, in wrapper
+    handler(*args)
+  File "c:\Automatizacion\Web-Scraping-adidas-CH\main.py", line 156, in start_scraping
+    threading.Thread(target=run_scraping, daemon=True).start()
+    ^^^^^^^^^
+NameError: name 'threading' is not defined. Did you forget to import 'threading'
+2025-01-27 15:52:24,425 [ERROR] Future exception was never retrieved
+future: <Future finished exception=NameError("name 'threading' is not defined")>
+Traceback (most recent call last):
+  File "C:\Users\jmapo\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet\core\page.py", line 948, in wrapper
+    handler(*args)
+  File "c:\Automatizacion\Web-Scraping-adidas-CH\main.py", line 156, in start_scraping
+    threading.Thread(target=run_scraping, daemon=True).start()
+    ^^^^^^^^^
+NameError: name 'threading' is not defined. Did you forget to import 'threading'
