@@ -1,9 +1,3 @@
-# --------------------------------------------------------
-# REQUISITOS:
-#   pip install flet selenium webdriver-manager pyperclip pandas openpyxl
-#   (y además PyInstaller si deseas generar el .exe)
-# --------------------------------------------------------
-
 import flet
 from flet import (
     Page,
@@ -39,23 +33,22 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
-# --------------------------------------------------------
-# Función para manejar rutas en modo ejecutable PyInstaller
-# --------------------------------------------------------
+# ----------------------------------------------------------------
+# Función para usar rutas relativas en PyInstaller
+# ----------------------------------------------------------------
 def resource_path(relative_path):
     """
     Retorna la ruta absoluta del 'relative_path' para que funcione
     tanto al ejecutar .py directamente como al generar el .exe con PyInstaller.
     """
     try:
-        # En tiempo de ejecución con PyInstaller, se crea una carpeta temporal
-        base_path = sys._MEIPASS
+        base_path = sys._MEIPASS  # Carpeta temporal que usa PyInstaller
     except Exception:
-        # Si no estás congelado con PyInstaller, toma el directorio actual
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-# Configurar logging para guardar en un archivo local:
+
+# Configurar archivo de log en la ruta “segura”:
 log_file = resource_path("adidas_scraping.log")
 logging.basicConfig(
     filename=log_file,
@@ -63,6 +56,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
     level=logging.INFO,
 )
+
 
 # ----------------------------------------------------------------
 # 1) Funciones para cerrar banners y pop-ups
@@ -87,10 +81,15 @@ def close_popup(driver):
     except:
         logging.info("No se encontró pop-up (o no se pudo cerrar).")
 
+
 # ----------------------------------------------------------------
 # 2) Función que simula Ctrl+A / Ctrl+C y obtiene todo el texto
 # ----------------------------------------------------------------
 def copy_page_text_like_human(driver):
+    """
+    Da clic en <body>, luego CTRL+A y CTRL+C,
+    y finalmente retorna el contenido del portapapeles (texto).
+    """
     body = driver.find_element(By.TAG_NAME, "body")
     body.click()
     time.sleep(1)
@@ -106,21 +105,21 @@ def copy_page_text_like_human(driver):
     copied_text = pyperclip.paste()
     return copied_text
 
-# ----------------------------------------------------------------
-# 3) Función principal de scraping: "scrape_like_human"
-# ----------------------------------------------------------------
-def scrape_like_human(codigo):
-    chrome_options = Options()
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-    driver.maximize_window()
-
-    product_text = ""
+# ----------------------------------------------------------------
+# 3) Función para procesar un SKU con un driver YA creado
+# ----------------------------------------------------------------
+def scrape_one_code(driver, codigo):
+    """
+    Navega a la home de Adidas, cierra banners/popup,
+    busca el SKU y extrae el texto de la página.
+    Retorna (url_final, texto_copiado).
+    """
     final_url = ""
+    product_text = ""
 
     try:
+        # Ir a la página principal una sola vez por SKU
         driver.get("https://www.adidas.cl/")
         WebDriverWait(driver, 20).until(
             EC.visibility_of_element_located((By.TAG_NAME, "body"))
@@ -174,11 +173,12 @@ def scrape_like_human(codigo):
 
     except Exception as e:
         logging.error(f"Error procesando código {codigo}: {e}")
-
-    finally:
-        driver.quit()
+        # Si algo falla, retornamos vacíos
+        final_url = None
+        product_text = ""
 
     return final_url, product_text
+
 
 # ----------------------------------------------------------------
 # 4) Lógicas para extraer nombre y precios (normal, descuento)
@@ -191,6 +191,7 @@ def parse_by_numeric_marker(lines):
     while i < len(lines):
         line = lines[i].strip()
         if patron_digitos.match(line):
+            # Buscar nombre en la siguiente línea no vacía
             i += 1
             nombre = None
             while i < len(lines):
@@ -221,6 +222,7 @@ def parse_by_numeric_marker(lines):
         i += 1
 
     return None, None, None
+
 
 def parse_by_category_marker(lines):
     patron_categoria = re.compile(r'^(hombre|mujer|niñ[oa]s|unisex)\s*•', re.IGNORECASE)
@@ -260,7 +262,11 @@ def parse_by_category_marker(lines):
         i += 1
     return None, None, None
 
+
 def extraer_nombre_precios(texto):
+    """
+    Aplica primero Lógica A (número suelto) y si falla, Lógica B (categorías).
+    """
     lines = texto.splitlines()
 
     # Lógica A
@@ -276,10 +282,14 @@ def extraer_nombre_precios(texto):
     # Falló todo
     return None, None, None
 
+
 # ----------------------------------------------------------------
 # 5) Guardar en Excel
 # ----------------------------------------------------------------
 def guardar_excel_adidas(datos):
+    """
+    datos: lista de [codigo, nombre, precio_normal, precio_descuento, url_final]
+    """
     df = pd.DataFrame(datos, columns=[
         "Código",
         "Nombre",
@@ -293,13 +303,14 @@ def guardar_excel_adidas(datos):
     logging.info(f"Datos guardados en: {nombre_archivo}")
     return nombre_archivo
 
+
 # ----------------------------------------------------------------
 # 6) Interfaz Flet
 # ----------------------------------------------------------------
 def main(page: flet.Page):
     page.title = "Scraping Adidas - Nombre y Precios (con Flet)"
 
-    stop_event = threading.Event()
+    stop_event = threading.Event()  # Para detener el proceso
     is_running = False
     start_time = [0]
 
@@ -322,21 +333,24 @@ def main(page: flet.Page):
         m, s = divmod(segundos, 60)
         return f"{m:02d}:{s:02d}"
 
-    def actualizar_timer(_):
-        if is_running:
-            elapsed = int(time.time() - start_time[0])
-            timer_label.value = f"Tiempo transcurrido: {formatear_tiempo(elapsed)}"
-            page.update()
-
-    page.interval = 1000
-    page.on_interval = actualizar_timer
-
+    # -------------------------------------------
+    # Hilo que hace el scraping (todos los SKUs)
+    # -------------------------------------------
     def run_scraping(codigos_list):
         nonlocal is_running
+
+        # Configurar el driver una sola vez
+        chrome_options = Options()
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver.maximize_window()
+
         resultados = []
         total = len(codigos_list)
 
-        actualizar_log("Iniciando scraping...")
+        start_time[0] = time.time()
+        actualizar_log("Iniciando scraping con un solo navegador...")
 
         for i, sku in enumerate(codigos_list, start=1):
             if stop_event.is_set():
@@ -344,34 +358,41 @@ def main(page: flet.Page):
                 break
 
             actualizar_log(f"\nProcesando código {i}/{total}: {sku}")
-            try:
-                url_final, texto_copiado = scrape_like_human(sku)
-            except Exception as e:
-                logging.error(f"Error en scrape_like_human({sku}): {e}")
-                actualizar_log(f"ERROR en Selenium: {e}")
-                url_final = None
-                texto_copiado = ""
 
+            # Llamamos a la función que usa el driver actual
+            url_final, texto_copiado = scrape_one_code(driver, sku)
+
+            # Extraer nombre y precios
             nombre_prod, p_normal, p_desc = extraer_nombre_precios(texto_copiado)
-            actualizar_log(f" -> Nombre: {nombre_prod}")
-            actualizar_log(f" -> Precio Normal: {p_normal}")
-            actualizar_log(f" -> Precio Descuento: {p_desc}")
-
             if not nombre_prod: nombre_prod = "No detectado"
             if not p_normal: p_normal = "No detectado"
             if not p_desc: p_desc = "N/A"
             if not url_final: url_final = "N/A"
 
+            actualizar_log(f" -> Nombre: {nombre_prod}")
+            actualizar_log(f" -> Precio Normal: {p_normal}")
+            actualizar_log(f" -> Precio Descuento: {p_desc}")
+
             resultados.append([sku, nombre_prod, p_normal, p_desc, url_final])
 
+            # Actualizar progreso
             progreso = float(i) / float(total)
             progress_bar.value = progreso
             progress_label.value = f"Progreso: {int(progreso * 100)}%"
+
+            # Actualizar timer
+            elapsed = int(time.time() - start_time[0])
+            timer_label.value = f"Tiempo transcurrido: {formatear_tiempo(elapsed)}"
+
             page.update()
 
-        if resultados:
+        # Cerrar driver al terminar
+        driver.quit()
+
+        # Si tenemos resultados y no fue abortado antes de empezar
+        if resultados and not stop_event.is_set():
             archivo = guardar_excel_adidas(resultados)
-            actualizar_log(f"Resultados guardados en {archivo}")
+            actualizar_log(f"\nResultados guardados en {archivo}")
 
         is_running = False
         if stop_event.is_set():
@@ -380,13 +401,19 @@ def main(page: flet.Page):
             progress_label.value = "Proceso finalizado"
         page.update()
 
+
+    # -------------------------------------------
+    # Botón Iniciar
+    # -------------------------------------------
     def on_iniciar_click(_):
         nonlocal is_running
+
         if is_running:
             page.snack_bar = SnackBar(Text("Ya hay un proceso en ejecución."), open=True)
             page.update()
             return
 
+        # Limpiar la bitácora y la barra de progreso
         log_text.value = ""
         progress_bar.value = 0
         progress_label.value = "Progreso: 0%"
@@ -395,7 +422,6 @@ def main(page: flet.Page):
 
         stop_event.clear()
         is_running = True
-        start_time[0] = time.time()
 
         codigos_str = codigos_field.value.strip()
         if not codigos_str:
@@ -406,9 +432,14 @@ def main(page: flet.Page):
 
         codigos_list = codigos_str.splitlines()
 
+        # Lanzar el hilo
         hilo = threading.Thread(target=run_scraping, args=(codigos_list,), daemon=True)
         hilo.start()
 
+
+    # -------------------------------------------
+    # Botón Detener
+    # -------------------------------------------
     def on_detener_click(_):
         if not is_running:
             page.snack_bar = SnackBar(Text("No hay proceso en ejecución."), open=True)
@@ -416,6 +447,10 @@ def main(page: flet.Page):
             return
         stop_event.set()
 
+
+    # -------------------------------------------
+    # Carga de archivo con SKUs
+    # -------------------------------------------
     def on_file_picked(e: FilePickerResultEvent):
         if e.files and len(e.files) > 0:
             file_path = e.files[0].path
@@ -433,6 +468,7 @@ def main(page: flet.Page):
 
     file_picker = FilePicker(on_result=on_file_picked)
 
+    # Construir layout
     page.add(
         file_picker,
         Column(
@@ -469,8 +505,12 @@ def main(page: flet.Page):
         )
     )
 
+# ----------------------------------------------------------------
+# 7) Ejecutar la app Flet
+# ----------------------------------------------------------------
 if __name__ == "__main__":
-    # Si deseas abrir en ventana Flet (Desktop):
+    # Opción 1: Abrir como ventana (Flet Desktop)
     flet.app(target=main, view=flet.FLET_APP)
-    # O si prefieres abrir en el navegador (puedes comentar la línea anterior y descomentar esta):
+
+    # Opción 2: Abrir en el navegador (descomenta si prefieres web)
     # flet.app(target=main, view=flet.WEB_BROWSER)

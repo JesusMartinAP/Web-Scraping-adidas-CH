@@ -523,3 +523,101 @@ Stacktrace:
 
 2025-01-28 10:43:32,526 [INFO] ====== WebDriver manager ======
 2025-01-28 10:43:33,218 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:48:51,981 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-28 10:48:51,982 [INFO] Starting up TCP server on localhost:64220
+2025-01-28 10:48:51,986 [INFO] Flet app has started...
+2025-01-28 10:48:51,988 [INFO] App URL: tcp://localhost:64220
+2025-01-28 10:48:51,988 [INFO] Starting Flet View app...
+2025-01-28 10:48:51,988 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-28 10:48:51,988 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-28 10:48:52,292 [INFO] App session started
+2025-01-28 10:48:56,319 [INFO] ====== WebDriver manager ======
+2025-01-28 10:48:57,077 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:48:57,112 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:48:57,137 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\132.0.6834.110\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-28 10:49:02,449 [INFO] Banner de cookies cerrado.
+2025-01-28 10:49:02,753 [INFO] Pop-up cerrado.
+2025-01-28 10:49:02,828 [INFO] Buscando SKU: IG9331
+2025-01-28 10:49:08,077 [INFO] URL tras buscar: https://www.adidas.cl/zapatos-de-futbol-f50-club-messi-multiterreno/IG9331.html
+2025-01-28 10:49:08,093 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:49:13,358 [INFO] Longitud del texto copiado: 6088
+2025-01-28 10:49:16,995 [INFO] Banner de cookies cerrado.
+2025-01-28 10:49:17,325 [INFO] Pop-up cerrado.
+2025-01-28 10:49:32,550 [ERROR] Error procesando código ID8661: Message: 
+
+2025-01-28 10:49:35,925 [INFO] Banner de cookies cerrado.
+2025-01-28 10:49:36,261 [INFO] Pop-up cerrado.
+2025-01-28 10:49:36,314 [INFO] Buscando SKU: IG4138
+2025-01-28 10:49:40,245 [INFO] URL tras buscar: https://www.adidas.cl/zapatillas-fabela-rise/IG4138.html
+2025-01-28 10:49:40,258 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:49:45,447 [INFO] Longitud del texto copiado: 5532
+2025-01-28 10:49:49,010 [INFO] Banner de cookies cerrado.
+2025-01-28 10:49:49,362 [INFO] Pop-up cerrado.
+2025-01-28 10:49:49,418 [INFO] Buscando SKU: IG9330
+2025-01-28 10:49:54,090 [INFO] URL tras buscar: https://www.adidas.cl/zapatos-de-futbol-f50-club-messi-pasto-sintetico/IG9330.html
+2025-01-28 10:49:54,105 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:49:59,293 [INFO] Longitud del texto copiado: 6285
+2025-01-28 10:50:02,414 [INFO] Banner de cookies cerrado.
+2025-01-28 10:50:02,766 [INFO] Pop-up cerrado.
+2025-01-28 10:50:03,000 [INFO] Buscando SKU: IN9331
+2025-01-28 10:50:06,307 [INFO] URL tras buscar: https://www.adidas.cl/search?q=IN9331
+2025-01-28 10:50:06,312 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:50:11,427 [INFO] Longitud del texto copiado: 1175
+2025-01-28 10:50:14,404 [INFO] Banner de cookies cerrado.
+2025-01-28 10:50:14,764 [INFO] Pop-up cerrado.
+2025-01-28 10:50:15,004 [INFO] Buscando SKU: IV9968
+2025-01-28 10:50:19,193 [INFO] URL tras buscar: https://www.adidas.cl/shorts-own-the-run-3-tiras/IV9968.html
+2025-01-28 10:50:19,212 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:50:24,414 [INFO] Longitud del texto copiado: 5722
+2025-01-28 10:50:27,727 [INFO] Banner de cookies cerrado.
+2025-01-28 10:50:28,139 [INFO] Pop-up cerrado.
+2025-01-28 10:50:28,197 [INFO] Buscando SKU: IZ3296
+2025-01-28 10:50:31,141 [INFO] URL tras buscar: https://www.adidas.cl/search?q=IZ3296
+2025-01-28 10:50:31,148 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:50:36,291 [INFO] Longitud del texto copiado: 1175
+2025-01-28 10:50:39,657 [INFO] Banner de cookies cerrado.
+2025-01-28 10:50:40,005 [INFO] Pop-up cerrado.
+2025-01-28 10:50:40,277 [INFO] Buscando SKU: ID3318
+2025-01-28 10:50:43,131 [INFO] URL tras buscar: https://www.adidas.cl/search?q=ID3318
+2025-01-28 10:50:43,137 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:50:48,286 [INFO] Longitud del texto copiado: 1175
+2025-01-28 10:50:51,299 [INFO] Banner de cookies cerrado.
+2025-01-28 10:50:51,641 [INFO] Pop-up cerrado.
+2025-01-28 10:50:51,694 [INFO] Buscando SKU: IE0044
+2025-01-28 10:50:58,159 [INFO] URL tras buscar: https://www.adidas.cl/search?q=IE0044
+2025-01-28 10:50:58,166 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:51:03,299 [INFO] Longitud del texto copiado: 1175
+2025-01-28 10:51:07,290 [INFO] Banner de cookies cerrado.
+2025-01-28 10:51:07,705 [INFO] Pop-up cerrado.
+2025-01-28 10:51:07,768 [INFO] Buscando SKU: IE4982
+2025-01-28 10:51:14,090 [INFO] URL tras buscar: https://www.adidas.cl/zapatos-de-futbol-copa-pure-ii-elite-terreno-blando/IE4982.html
+2025-01-28 10:51:14,105 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:51:19,334 [INFO] Longitud del texto copiado: 6758
+2025-01-28 10:51:22,677 [INFO] Banner de cookies cerrado.
+2025-01-28 10:51:23,028 [INFO] Pop-up cerrado.
+2025-01-28 10:51:23,296 [INFO] Buscando SKU: IF5447
+2025-01-28 10:51:28,600 [INFO] URL tras buscar: https://www.adidas.cl/zapatos-de-futbol-copa-pure-ii-elite-terreno-firme/IF5447.html
+2025-01-28 10:51:28,606 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:51:33,774 [INFO] Longitud del texto copiado: 6856
+2025-01-28 10:51:37,380 [INFO] Banner de cookies cerrado.
+2025-01-28 10:51:38,353 [INFO] Pop-up cerrado.
+2025-01-28 10:51:38,378 [INFO] Buscando SKU: IG7766
+2025-01-28 10:51:43,060 [INFO] URL tras buscar: https://www.adidas.cl/search?q=IG7766
+2025-01-28 10:51:43,074 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:51:48,261 [INFO] Longitud del texto copiado: 1163
+2025-01-28 10:51:52,415 [INFO] Banner de cookies cerrado.
+2025-01-28 10:51:53,482 [INFO] Pop-up cerrado.
+2025-01-28 10:51:53,526 [INFO] Buscando SKU: JP0458
+2025-01-28 10:51:58,881 [INFO] URL tras buscar: https://www.adidas.cl/camiseta-local-al-nassr-fc-24-25-ronaldo-ninos/JP0458.html
+2025-01-28 10:51:58,896 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:52:04,249 [INFO] Longitud del texto copiado: 6315
+2025-01-28 10:52:08,295 [INFO] Banner de cookies cerrado.
+2025-01-28 10:52:09,251 [INFO] Pop-up cerrado.
+2025-01-28 10:52:09,286 [INFO] Buscando SKU: JP0459
+2025-01-28 10:52:15,264 [INFO] URL tras buscar: https://www.adidas.cl/camiseta-local-al-nassr-fc-24-25-ronaldo/JP0459.html
+2025-01-28 10:52:15,287 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:52:20,522 [INFO] Longitud del texto copiado: 5959
+2025-01-28 10:52:25,462 [INFO] Banner de cookies cerrado.
+2025-01-28 10:52:25,543 [INFO] No se encontró pop-up (o no se pudo cerrar).
+2025-01-28 10:52:41,032 [ERROR] Error procesando código GC6046: Message: 
+
