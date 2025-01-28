@@ -226,3 +226,109 @@ Stacktrace:
 	RtlGetAppContainerNamedObjectPath [0x77C0CE41+561]
 
 2025-01-28 09:00:34,958 [INFO] Datos guardados en: Adidas_Scraping_2025-01-28_09-00-30.xlsx
+2025-01-28 10:13:02,971 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-28 10:13:12,716 [INFO] Starting Flet web server on port 50261...
+2025-01-28 10:13:12,717 [INFO] Web renderer configured: WebRenderer.CANVAS_KIT
+2025-01-28 10:13:12,717 [INFO] Use color emoji: False
+2025-01-28 10:13:12,717 [INFO] Route URL strategy configured: path
+2025-01-28 10:13:12,753 [INFO] Starting up Flet App Manager
+2025-01-28 10:13:12,753 [INFO] App URL: http://127.0.0.1:50261
+2025-01-28 10:13:12,898 [INFO] Temp dir created for patched index and manifest: C:\Users\jmapo\AppData\Local\Temp\tmpqt1rewbj
+2025-01-28 10:13:12,899 [INFO] Web root: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_web\web
+2025-01-28 10:13:12,899 [INFO] assets_dir does not exist: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-28 10:13:12,899 [INFO] Assets dir: None
+2025-01-28 10:13:15,339 [INFO] New FletApp: mJOPTSVA
+2025-01-28 10:13:15,557 [INFO] New session created (1 total): _WCTtkswiQKQZtFmJ_5ea416eadf2b7986ed4cb0b60a9c187f61ba5269
+2025-01-28 10:13:15,557 [INFO] Start session: WCTtkswiQKQZtFmJ
+2025-01-28 10:13:27,161 [INFO] ====== WebDriver manager ======
+2025-01-28 10:13:27,901 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:13:27,936 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:13:27,970 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\132.0.6834.110\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-28 10:13:32,917 [INFO] Banner de cookies cerrado.
+2025-01-28 10:13:33,477 [INFO] Pop-up cerrado.
+2025-01-28 10:13:33,500 [INFO] Buscando SKU: ID3856
+2025-01-28 10:13:39,361 [INFO] URL tras buscar: https://www.adidas.cl/zapatos-de-futbol-predator-pro-terreno-firme/ID3856.html
+2025-01-28 10:13:39,368 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:13:44,566 [INFO] Longitud del texto copiado: 6167
+2025-01-28 10:13:46,752 [INFO] ====== WebDriver manager ======
+2025-01-28 10:13:47,421 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:13:51,505 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:13:51,538 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\132.0.6834.110\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-28 10:13:56,230 [INFO] Banner de cookies cerrado.
+2025-01-28 10:13:56,784 [INFO] Pop-up cerrado.
+2025-01-28 10:13:56,811 [INFO] Buscando SKU: IE2375
+2025-01-28 10:14:01,878 [INFO] URL tras buscar: https://www.adidas.cl/zapatos-de-futbol-x-crazyfast-fg/IE2375.html
+2025-01-28 10:14:01,890 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:14:07,131 [INFO] Longitud del texto copiado: 6241
+2025-01-28 10:14:09,351 [INFO] ====== WebDriver manager ======
+2025-01-28 10:14:10,027 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:14:14,120 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:14:14,147 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\132.0.6834.110\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-28 10:14:19,701 [INFO] Banner de cookies cerrado.
+2025-01-28 10:14:19,945 [INFO] Pop-up cerrado.
+2025-01-28 10:14:20,008 [INFO] Buscando SKU: IV8323
+2025-01-28 10:14:25,815 [INFO] URL tras buscar: https://www.adidas.cl/short-local-universidad-de-chile-2025/IV8323.html
+2025-01-28 10:14:25,826 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:14:31,047 [INFO] Longitud del texto copiado: 4918
+2025-01-28 10:14:37,538 [INFO] Datos guardados en: Adidas_Scraping_2025-01-28_10-14-33.xlsx
+2025-01-28 10:20:47,183 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-28 10:20:47,184 [INFO] Starting up TCP server on localhost:51772
+2025-01-28 10:20:47,188 [INFO] Flet app has started...
+2025-01-28 10:20:47,189 [INFO] App URL: tcp://localhost:51772
+2025-01-28 10:20:47,189 [INFO] Starting Flet View app...
+2025-01-28 10:20:47,190 [INFO] Looking for Flet executable at: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-28 10:20:47,190 [INFO] Flet View found in: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-01-28 10:20:47,688 [INFO] App session started
+2025-01-28 10:21:03,064 [INFO] ====== WebDriver manager ======
+2025-01-28 10:21:03,870 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:21:03,901 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:21:03,928 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\132.0.6834.110\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-28 10:21:09,271 [INFO] Banner de cookies cerrado.
+2025-01-28 10:21:09,442 [INFO] Pop-up cerrado.
+2025-01-28 10:21:09,442 [INFO] Driver iniciado y banners/pop-ups cerrados.
+2025-01-28 10:21:16,100 [INFO] No se encontró pop-up (o no se pudo cerrar).
+2025-01-28 10:21:16,249 [INFO] Banner de cookies cerrado.
+2025-01-28 10:21:32,361 [ERROR] Error en search_and_copy_text(ID3856): Message: 
+
+2025-01-28 10:21:38,290 [INFO] No se encontró pop-up (o no se pudo cerrar).
+2025-01-28 10:21:38,441 [INFO] Banner de cookies cerrado.
+2025-01-28 10:21:54,661 [ERROR] Error en search_and_copy_text(IV8323): Message: 
+
+2025-01-28 10:22:00,974 [INFO] No se encontró pop-up (o no se pudo cerrar).
+2025-01-28 10:22:01,153 [INFO] Banner de cookies cerrado.
+2025-01-28 10:24:54,560 [INFO] Assets path configured: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-28 10:24:54,867 [INFO] Starting Flet web server on port 51914...
+2025-01-28 10:24:54,868 [INFO] Web renderer configured: WebRenderer.CANVAS_KIT
+2025-01-28 10:24:54,868 [INFO] Use color emoji: False
+2025-01-28 10:24:54,868 [INFO] Route URL strategy configured: path
+2025-01-28 10:24:54,894 [INFO] Starting up Flet App Manager
+2025-01-28 10:24:54,894 [INFO] App URL: http://127.0.0.1:51914
+2025-01-28 10:24:55,017 [INFO] Temp dir created for patched index and manifest: C:\Users\jmapo\AppData\Local\Temp\tmpisz1culf
+2025-01-28 10:24:55,017 [INFO] Web root: C:\Automatizacion\Web-Scraping-adidas-CH\test\Lib\site-packages\flet_web\web
+2025-01-28 10:24:55,017 [INFO] assets_dir does not exist: C:\Automatizacion\Web-Scraping-adidas-CH\assets
+2025-01-28 10:24:55,019 [INFO] Assets dir: None
+2025-01-28 10:24:56,499 [INFO] New FletApp: YbUPY5Yu
+2025-01-28 10:24:56,674 [INFO] New session created (1 total): _PGw6CYfmq78h6WAm_5ea416eadf2b7986ed4cb0b60a9c187f61ba5269
+2025-01-28 10:24:56,674 [INFO] Start session: PGw6CYfmq78h6WAm
+2025-01-28 10:25:04,647 [INFO] ====== WebDriver manager ======
+2025-01-28 10:25:05,369 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:25:05,405 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:25:05,439 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\132.0.6834.110\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-28 10:25:09,940 [INFO] Banner de cookies cerrado.
+2025-01-28 10:25:10,471 [INFO] Pop-up cerrado.
+2025-01-28 10:25:10,492 [INFO] Buscando SKU: ID3856
+2025-01-28 10:25:14,968 [INFO] URL tras buscar: https://www.adidas.cl/zapatos-de-futbol-predator-pro-terreno-firme/ID3856.html
+2025-01-28 10:25:14,976 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:25:20,140 [INFO] Longitud del texto copiado: 7296
+2025-01-28 10:25:22,351 [INFO] ====== WebDriver manager ======
+2025-01-28 10:25:23,005 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:25:27,100 [INFO] Get LATEST chromedriver version for google-chrome
+2025-01-28 10:25:27,137 [INFO] Driver [C:\Users\jmapo\.wdm\drivers\chromedriver\win64\132.0.6834.110\chromedriver-win32/chromedriver.exe] found in cache
+2025-01-28 10:25:33,008 [INFO] Banner de cookies cerrado.
+2025-01-28 10:25:33,201 [INFO] Pop-up cerrado.
+2025-01-28 10:25:33,275 [INFO] Buscando SKU: IE2375
+2025-01-28 10:25:39,382 [INFO] URL tras buscar: https://www.adidas.cl/zapatos-de-futbol-x-crazyfast-fg/IE2375.html
+2025-01-28 10:25:39,394 [INFO] Asumimos que ya estamos en la página del producto.
+2025-01-28 10:25:44,645 [INFO] Longitud del texto copiado: 6241
+2025-01-28 10:25:49,680 [INFO] Session disconnected: _PGw6CYfmq78h6WAm_5ea416eadf2b7986ed4cb0b60a9c187f61ba5269
+2025-01-28 10:25:51,131 [INFO] Datos guardados en: Adidas_Scraping_2025-01-28_10-25-46.xlsx
